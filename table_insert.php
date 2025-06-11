@@ -20,7 +20,6 @@ $penyedia_id = $row_penyedia['user_id'];
 // Insert data ke tabel items dengan user_id penyedia dan gambar
 $sql_items = "INSERT INTO items (nama, tipe, harga_sewa, lokasi, status, user_id, gambar) VALUES
     ('Kelas A', 'ruang', 10000, 'Gudang A', 'tersedia', $penyedia_id, 'classroom.jpeg'),
-    ('Kelas C', 'ruang', 5000, 'Gudang B', 'tersedia', $penyedia_id, 'classroom.jpeg')
 ";
 mysqli_query($con, $sql_items) or die("❌ Gagal insert items: " . mysqli_error($con));
 

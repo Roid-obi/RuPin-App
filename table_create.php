@@ -83,15 +83,6 @@ $sql_laporan_pembayaran = "CREATE TABLE laporan_pembayaran (
 )";
 mysqli_query($con, $sql_laporan_pembayaran) or die("❌ Gagal membuat tabel laporan_pembayaran: " . mysqli_error($con));
 
-// CREATE TABLE sessions
-$sql_sessions = "CREATE TABLE sessions (
-    session_id VARCHAR(100) PRIMARY KEY,
-    user_id INT,
-    role VARCHAR(50),
-    FOREIGN KEY (user_id) REFERENCES users(user_id)
-)";
-mysqli_query($con, $sql_sessions) or die("❌ Gagal membuat tabel sessions: " . mysqli_error($con));
-
 echo "✅ SEMUA TABEL BERHASIL DIHAPUS DAN DIBUAT ULANG.<br>";
 echo "✅ Struktur database siap digunakan.";
 
