@@ -24,13 +24,14 @@ $result = $stmt->get_result();
     </tr>
     <?php while ($row = $result->fetch_assoc()) { ?>
     <tr>
-        <td><?= $row['nama'] ?></td>
-        <td><?= $row['status_pesan'] ?></td>
-        <td><?= $row['status_bayar'] ?></td>
+        <td><?= htmlspecialchars($row['nama']) ?></td>
+        <td><?= htmlspecialchars($row['status_pesan']) ?></td>
+        <td><?= htmlspecialchars($row['status_bayar']) ?></td>
         <td>
-            <?php if ($row['status_pesan'] == 'menunggu') { ?>
-            <a href="batal_pemesanan.php?id=<?= $row['booking_id'] ?>">Batalkan</a>
+            <?php if ($row['status_pesan'] === 'menunggu') { ?>
+                <a href="batal_pemesanan.php?id=<?= $row['booking_id'] ?>">Batalkan</a>
             <?php } ?>
+            <a href="detail_pembayaran.php?booking_id=<?= $row['booking_id'] ?>">Detail Pesanan</a>
         </td>
     </tr>
     <?php } ?>

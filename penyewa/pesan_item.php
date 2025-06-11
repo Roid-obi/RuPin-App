@@ -7,6 +7,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $item_id = $_POST['item_id'];
     $tanggal = date('Y-m-d');
 
+    // Ambil harga_sewa dari item
+    $query_item = $con->prepare("SELECT harga_sewa FROM items WHERE item_id = ?");
+    $query_item->bind_param("i", $item_id);
+    $query_item->execute();
+    $result_item = $query_item->get_result();
+
+    if ($result_item->num_rows === 0) {
+        die("Item tidak ditemukan.");
+    }
+
+    $item = $result_item->fetch_assoc();
+    $harga_sewa = $item['harga_sewa'];
+    $biaya_admin = $harga_sewa * 0.05;
+    $total_pembayaran = $harga_sewa + $biaya_admin;
+    $metode = "transfer";
+
+    // Masukkan ke tabel pemesanan
     $sql = "INSERT INTO pemesanan (item_id, user_id, status, tanggal) VALUES (?, ?, 'menunggu', ?)";
     $stmt = $con->prepare($sql);
     $stmt->bind_param("iis", $item_id, $user_id, $tanggal);
@@ -14,17 +31,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($stmt->execute()) {
         $booking_id = $stmt->insert_id;
 
-        // Simulasi pembayaran langsung
-        $jumlah = 100000; // harga tetap untuk simulasi
-        $metode = "transfer";
-
+        // Masukkan ke tabel pembayaran
         $sql2 = "INSERT INTO pembayaran (booking_id, jumlah, status, metode) VALUES (?, ?, 'menunggu', ?)";
         $stmt2 = $con->prepare($sql2);
-        $stmt2->bind_param("ids", $booking_id, $jumlah, $metode);
+        $stmt2->bind_param("ids", $booking_id, $total_pembayaran, $metode);
         $stmt2->execute();
 
-        header("Location: status_pemesanan.php?msg=berhasil");
+        header("Location: konfirmasi_pembayaran.php?booking_id=" . $booking_id);
+        exit();
     } else {
-        echo "Gagal memesan";
+        echo "❌ Gagal memesan item. Silakan coba lagi.";
     }
 }
+?>

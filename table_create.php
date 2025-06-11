@@ -28,17 +28,19 @@ $sql_users = "CREATE TABLE users (
 )";
 mysqli_query($con, $sql_users) or die("❌ Gagal membuat tabel users: " . mysqli_error($con));
 
-// CREATE TABLE items — sekarang dengan user_id (penyedia)
+// CREATE TABLE items — sekarang dengan user_id (penyedia) dan kolom gambar
 $sql_items = "CREATE TABLE items (
     item_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT,
     nama VARCHAR(100),
-    tipe VARCHAR(50),
-    jumlah INT,
+    tipe ENUM('ruang', 'alat'),
+    harga_sewa DOUBLE,
     lokasi VARCHAR(100),
-    status VARCHAR(50),
+    status ENUM('tersedia', 'tidak tersedia'),
+    gambar VARCHAR(255),
     FOREIGN KEY (user_id) REFERENCES users(user_id)
 )";
+
 mysqli_query($con, $sql_items) or die("❌ Gagal membuat tabel items: " . mysqli_error($con));
 
 // CREATE TABLE pemesanan

@@ -17,10 +17,10 @@ if (!$result_penyedia) {
 $row_penyedia = mysqli_fetch_assoc($result_penyedia);
 $penyedia_id = $row_penyedia['user_id'];
 
-// Insert data ke tabel items dengan user_id penyedia
-$sql_items = "INSERT INTO items (nama, tipe, jumlah, lokasi, status, user_id) VALUES
-    ('Laptop Lenovo', 'Elektronik', 10, 'Gudang A', 'tersedia', $penyedia_id),
-    ('Meja Kantor', 'Furniture', 5, 'Gudang B', 'tersedia', $penyedia_id)
+// Insert data ke tabel items dengan user_id penyedia dan gambar
+$sql_items = "INSERT INTO items (nama, tipe, harga_sewa, lokasi, status, user_id, gambar) VALUES
+    ('Kelas A', 'ruang', 10000, 'Gudang A', 'tersedia', $penyedia_id, 'classroom.jpeg'),
+    ('Kelas C', 'ruang', 5000, 'Gudang B', 'tersedia', $penyedia_id, 'classroom.jpeg')
 ";
 mysqli_query($con, $sql_items) or die("❌ Gagal insert items: " . mysqli_error($con));
 
@@ -39,7 +39,7 @@ $item_id = $itemRow['item_id'];
 
 // Insert data ke tabel pemesanan
 $sql_pemesanan = "INSERT INTO pemesanan (item_id, user_id, status, tanggal) VALUES
-    ($item_id, $penyewa_id, 'pending', '2025-06-01')
+    ($item_id, $penyewa_id, 'menunggu', '2025-06-01')
 ";
 mysqli_query($con, $sql_pemesanan) or die("❌ Gagal insert pemesanan: " . mysqli_error($con));
 
@@ -48,7 +48,7 @@ $booking_id = mysqli_insert_id($con);
 
 // Insert data ke tabel pembayaran
 $sql_pembayaran = "INSERT INTO pembayaran (booking_id, jumlah, status, metode, tanggal_bayar) VALUES
-    ($booking_id, 1500000, 'unpaid', 'transfer', '2025-06-01')
+    ($booking_id, 1500000, 'menunggu', 'transfer', NULL)
 ";
 mysqli_query($con, $sql_pembayaran) or die("❌ Gagal insert pembayaran: " . mysqli_error($con));
 
