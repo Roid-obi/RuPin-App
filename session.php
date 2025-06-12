@@ -2,7 +2,7 @@
 // session.php (include this in all files to get current user)
 session_start();
 if (!isset($_SESSION['user_id'])) {
-    header('Location: ./auth/login.php');
+    header('Location: ./');
     exit();
 }
 $user_id = $_SESSION['user_id'];
