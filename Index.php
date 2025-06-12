@@ -2,21 +2,6 @@
 session_start(); // Tambahkan ini di awal file
 include './config.php';
 
-// Jika user sudah login, arahkan langsung sesuai role
-// if (isset($_SESSION['user_id'])) {
-//     switch ($_SESSION['role']) {
-//         case 'penyewa':
-//             header("Location: penyewa/index.php");
-//             exit();
-//         case 'penyedia':
-//             header("Location: penyedia/index.php");
-//             exit();
-//         case 'admin':
-//             header("Location: admin/index.php");
-//             exit();
-//     }
-// }
-
 // Ambil item dari database
 $items = mysqli_query($con, "SELECT * FROM items WHERE status = 'tersedia' LIMIT 6");
 ?>
@@ -132,6 +117,19 @@ $items = mysqli_query($con, "SELECT * FROM items WHERE status = 'tersedia' LIMIT
     <h1 class="display-4 fw-bold">Sewa Ruangan & Alat Mudah</h1>
     <p class="lead mb-4">Temukan berbagai kebutuhan sewa dengan cepat dan nyaman.</p>
     <a href="#items" class="btn btn-primary btn-lg">Lihat Item</a>
+  </div>
+</section>
+
+<!-- Tentang -->
+<section class="py-5 bg-light text-center my-5">
+  <div class="container">
+    <h2 class="text-primary mb-4">Tentang RuPin</h2>
+    <p class="lead mb-3">
+      RuPin adalah platform digital yang memudahkan Anda untuk menyewa ruangan maupun alat secara online.
+    </p>
+    <p class="mb-0">
+      Dengan tampilan yang sederhana dan fitur yang lengkap, kami hadir untuk memberikan pengalaman sewa menyewa yang lebih cepat, aman, dan nyaman.
+    </p>
   </div>
 </section>
 

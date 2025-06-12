@@ -13,14 +13,29 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'penyedia') {
     <title>Dashboard Penyedia</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
+        
         body {
-            min-height: 100vh;
             display: flex;
+            min-height: 100vh;
+            flex-direction: row;
+            margin: 0;
         }
+
         .sidebar {
             width: 250px;
             background-color: #675DFE;
             color: white;
+            position: fixed; /* Sidebar tetap di tempat */
+            top: 0;
+            left: 0;
+            height: 100vh; /* Penuh dari atas ke bawah */
+            overflow-y: auto; /* Jika isi terlalu panjang */
+        }
+
+        .content {
+            flex: 1;
+            padding: 2rem;
+            margin-left: 250px; /* Agar konten tidak tertutup sidebar */
         }
         .sidebar a {
             color: white;
