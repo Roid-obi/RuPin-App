@@ -9,7 +9,12 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit;
 }
 
-$sql = "SELECT * FROM pembayaran ORDER BY tanggal_bayar DESC";
+$sql = "
+    SELECT p.pembayaran_id, p.booking_id, p.jumlah, p.status AS status_bayar, p.tanggal_bayar, pm.status AS status_pesan
+    FROM pembayaran p
+    JOIN pemesanan pm ON p.booking_id = pm.booking_id
+    ORDER BY p.tanggal_bayar DESC
+";
 $result = $con->query($sql);
 ?>
 <!DOCTYPE html>
@@ -22,7 +27,6 @@ $result = $con->query($sql);
         body {
             display: flex;
             min-height: 100vh;
-            flex-direction: row;
             margin: 0;
         }
 
@@ -30,32 +34,45 @@ $result = $con->query($sql);
             width: 250px;
             background-color: #675DFE;
             color: white;
-            position: fixed; /* Sidebar tetap di tempat */
+            position: fixed;
             top: 0;
             left: 0;
-            height: 100vh; /* Penuh dari atas ke bawah */
-            overflow-y: auto; /* Jika isi terlalu panjang */
+            height: 100vh;
+            overflow-y: auto;
         }
 
-        .content {
-            flex: 1;
-            padding: 2rem;
-            margin-left: 250px; /* Agar konten tidak tertutup sidebar */
-        }
-        
         .sidebar a {
             color: white;
             text-decoration: none;
             display: block;
             padding: 1rem;
         }
+
         .sidebar a:hover,
         .sidebar .active {
             background-color: #574ee5;
         }
+
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f8f9fa;
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 2rem;
+            height: 70px;
+        }
+
+        .btn-outline-primary {
+            color: #594ddc;
+            border-color: #594ddc;
+        }
+
         .content {
             flex: 1;
             padding: 2rem;
+            margin-left: 250px;
         }
     </style>
 </head>
@@ -74,6 +91,17 @@ $result = $con->query($sql);
 
 <!-- Konten Utama -->
 <div class="content">
+    <!-- Navbar Atas di Dalam Konten -->
+        <div class="top-nav rounded shadow-sm mb-4">
+            <div>
+                <a href="../index.php" class="btn btn-outline-primary btn-sm">← Ke Homepage</a>
+            </div>
+            <div class="text-end">
+                <small>Halo, <?= ucfirst($_SESSION['role']) ?></small><br>
+                <!-- <a href="../logout.php" class="text-danger text-decoration-none btn btn-link btn-sm">Logout</a> -->
+            </div>
+        </div>
+
     <h2>Konfirmasi Pembayaran</h2>
 
     <div class="table-responsive">
@@ -83,7 +111,8 @@ $result = $con->query($sql);
                     <th>ID Pembayaran</th>
                     <th>ID Pemesanan</th>
                     <th>Jumlah</th>
-                    <th>Status</th>
+                    <th>Status Pesanan</th>
+                    <th>Status Pembayaran</th>
                     <th>Tanggal Bayar</th>
                     <th>Aksi</th>
                 </tr>
@@ -94,14 +123,25 @@ $result = $con->query($sql);
                     <td><?= htmlspecialchars($row['pembayaran_id']) ?></td>
                     <td><?= htmlspecialchars($row['booking_id']) ?></td>
                     <td>Rp <?= number_format($row['jumlah'], 0, ',', '.') ?></td>
-                    <td><?= htmlspecialchars($row['status']) ?></td>
+                    <td><?= htmlspecialchars($row['status_pesan']) ?></td>
+                    <td><?= htmlspecialchars($row['status_bayar']) ?></td>
                     <td><?= htmlspecialchars($row['tanggal_bayar']) ?></td>
                     <td>
-                        <?php if ($row['status'] === 'menunggu') { ?>
+                        <?php if ($row['status_pesan'] === 'ditolak') { ?>
+                            <!-- Jika pesanan ditolak, pembayaran otomatis tidak dikonfirmasi -->
+                            <span class="badge bg-secondary">Tidak Berlaku</span>
+                        <?php } elseif ($row['status_pesan'] === 'menunggu') { ?>
+                            <!-- Jika pesanan belum diterima -->
+                            <button class="btn btn-sm btn-warning" disabled>Menunggu...</button>
+                        <?php } elseif ($row['status_bayar'] === 'menunggu') { ?>
+                            <!-- Jika pesanan diterima tapi pembayaran belum dikonfirmasi -->
                             <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#konfirmasiModal<?= $row['pembayaran_id'] ?>">
                                 Konfirmasi
                             </button>
-                        <?php } else { echo '-'; } ?>
+                        <?php } else { ?>
+                            <!-- Jika sudah dikonfirmasi -->
+                            <span class="badge bg-success">Sudah Dikonfirmasi</span>
+                        <?php } ?>
                     </td>
                 </tr>
 

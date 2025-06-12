@@ -45,12 +45,33 @@ $result = $stmt->get_result();
             overflow-y: auto; /* Jika isi terlalu panjang */
         }
 
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f8f9fa;
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 2rem;
+            height: 70px;
+        }
+
+        .btn-outline-primary {
+            color: #594ddc;
+            border-color: #594ddc;
+        }
+
+        .btn-outline-primary:hover {
+            background-color: #594ddc;
+            border-color: #594ddc;
+        }
+
         .content {
             flex: 1;
             padding: 2rem;
             margin-left: 250px; /* Agar konten tidak tertutup sidebar */
         }
-        
+
         .sidebar a {
             color: white;
             text-decoration: none;
@@ -73,7 +94,6 @@ $result = $stmt->get_result();
 <div class="sidebar">
     <h4 class="text-center py-3">Rupin - Penyewa</h4>
     <a href="index.php">Dashboard</a>
-    <a href="cari_item.php">Cari Item</a>
     <a href="status_pemesanan.php" class="active">Status Pemesanan</a>
     <a href="profil.php">Profil Saya</a>
     <a href="../logout.php" class="text-danger">Logout</a>
@@ -81,6 +101,18 @@ $result = $stmt->get_result();
 
 <!-- Konten Utama -->
 <div class="content">
+
+    <!-- Navbar Atas di Dalam Konten -->
+    <div class="top-nav rounded shadow-sm mb-4">
+        <div>
+            <a href="../index.php" class="btn btn-outline-primary btn-sm">← Ke Homepage</a>
+        </div>
+        <div class="text-end">
+            <small>Halo, <?= ucfirst($_SESSION['role']) ?></small><br>
+            <!-- <a href="../logout.php" class="text-danger text-decoration-none btn btn-link btn-sm">Logout</a> -->
+        </div>
+    </div>
+
     <h2>Status Pemesanan</h2>
 
     <div class="table-responsive">
@@ -103,7 +135,7 @@ $result = $stmt->get_result();
                         <?php if ($row['status_pesan'] === 'menunggu') { ?>
                             <button class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#batalModal<?= $row['booking_id'] ?>">Batalkan</button>
                         <?php } else { ?>
-                            <span class="text-muted">Tidak tersedia</span>
+                            <!-- <span class="text-muted">Tidak tersedia</span> -->
                         <?php } ?>
                         <a href="detail_pembayaran.php?booking_id=<?= $row['booking_id'] ?>" class="btn btn-sm btn-info text-white">Detail Pesanan</a>
                     </td>

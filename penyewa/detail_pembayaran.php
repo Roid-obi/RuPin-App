@@ -15,7 +15,7 @@ if (!isset($_GET['booking_id'])) {
 
 $booking_id = intval($_GET['booking_id']);
 
-$sql = "SELECT p.jumlah, p.metode, i.nama AS nama_item, i.harga_sewa
+$sql = "SELECT p.jumlah, p.metode, p.status AS status_bayar, i.nama AS nama_item, i.harga_sewa
         FROM pembayaran p
         JOIN pemesanan pm ON p.booking_id = pm.booking_id
         JOIN items i ON pm.item_id = i.item_id
@@ -39,12 +39,11 @@ $biaya_admin = $data['harga_sewa'] * 0.05;
     <meta charset="UTF-8">
     <title>Detail Pembayaran</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"  rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">  
     <style>
-        
         body {
             display: flex;
             min-height: 100vh;
-            flex-direction: row;
             margin: 0;
         }
 
@@ -52,32 +51,33 @@ $biaya_admin = $data['harga_sewa'] * 0.05;
             width: 250px;
             background-color: #675DFE;
             color: white;
-            position: fixed; /* Sidebar tetap di tempat */
+            position: fixed;
             top: 0;
             left: 0;
-            height: 100vh; /* Penuh dari atas ke bawah */
-            overflow-y: auto; /* Jika isi terlalu panjang */
+            height: 100vh;
+            overflow-y: auto;
         }
 
-        .content {
-            flex: 1;
-            padding: 2rem;
-            margin-left: 250px; /* Agar konten tidak tertutup sidebar */
+        .sidebar h4 {
+            font-weight: bold;
         }
-        
+
         .sidebar a {
             color: white;
             text-decoration: none;
             display: block;
             padding: 1rem;
         }
+
         .sidebar a:hover,
         .sidebar .active {
             background-color: #574ee5;
         }
+
         .content {
             flex: 1;
             padding: 2rem;
+            margin-left: 250px;
         }
     </style>
 </head>
@@ -87,7 +87,6 @@ $biaya_admin = $data['harga_sewa'] * 0.05;
 <div class="sidebar">
     <h4 class="text-center py-3">Rupin - Penyewa</h4>
     <a href="index.php">Dashboard</a>
-    <a href="cari_item.php">Cari Item</a>
     <a href="status_pemesanan.php" class="active">Status Pemesanan</a>
     <a href="profil.php">Profil Saya</a>
     <a href="../logout.php" class="text-danger">Logout</a>
@@ -107,9 +106,33 @@ $biaya_admin = $data['harga_sewa'] * 0.05;
         </div>
     </div>
 
+    <?php if ($data['status_bayar'] === 'dikonfirmasi'): ?>
+        <!-- Jika pembayaran sudah dikonfirmasi -->
+        <div class="alert alert-success text-center">
+            <h5><i class="fas fa-check-circle me-2"></i>Pembayaran Selesai</h5>
+            <p>Terima kasih! Pembayaran Anda telah dikonfirmasi.</p>
+        </div>
+    <?php else: ?>
+        <!-- Jika pembayaran masih menunggu konfirmasi -->
+        <!-- QR Code -->
+        <div class="text-center my-4">
+            <img src="../image/qr.png" alt="QR Code Pembayaran" class="img-fluid rounded shadow-sm" style="max-width: 250px;">
+            <p class="mt-2"><strong>Scan QR Code untuk melakukan pembayaran ke rekening admin.</strong></p>
+        </div>
+
+        <!-- Instruksi Kirim Bukti -->
+        <div class="alert alert-info text-center mb-4">
+            <p><strong>Ingin cepat diproses?</strong> Kirim bukti pembayaran melalui WhatsApp ke admin.</p>
+            <a href="https://wa.me/6281234567890?text=Halo%20admin,%20saya%20ingin%20mengirim%20bukti%20pembayaran%20untuk%20booking%20ID:<?= $booking_id ?>" 
+               target="_blank" class="btn btn-success">
+               <i class="fab fa-whatsapp me-2"></i>Kirim Bukti via WhatsApp
+            </a>
+        </div>
+    <?php endif; ?>
+
     <a href="status_pemesanan.php" class="btn btn-secondary">Kembali</a>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

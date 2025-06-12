@@ -20,6 +20,7 @@ $items = mysqli_query($con, "SELECT * FROM items WHERE status = 'tersedia' LIMIT
 
     .navbar-brand {
       font-weight: bold;
+      color: #675DFE;
     }
 
     .hero {
@@ -57,6 +58,16 @@ $items = mysqli_query($con, "SELECT * FROM items WHERE status = 'tersedia' LIMIT
       border-color: #594ddc;
     }
 
+    .btn-outline-primary {
+      color: var(--primary-color);
+      border-color: var(--primary-color);
+    }
+
+    .btn-outline-primary:hover {
+      background-color: var(--primary-color);
+      color: white;
+    }
+
     .card-title {
       font-size: 1.2rem;
       color: var(--primary-color);
@@ -76,7 +87,7 @@ $items = mysqli_query($con, "SELECT * FROM items WHERE status = 'tersedia' LIMIT
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg shadow-sm">
   <div class="container">
-    <a class="navbar-brand fw-bold text-primary" href="#">Rupin</a>
+    <a class="navbar-brand fw-bold " href="index.php">Rupin</a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -92,9 +103,10 @@ $items = mysqli_query($con, "SELECT * FROM items WHERE status = 'tersedia' LIMIT
         <!-- Jika sudah login -->
         <div class="d-flex align-items-center gap-3">
           <div class="text-dark text-end">
-            <!-- <small class="d-block">Halo, </small> -->
             <small class="d-block">Halo, <?= ucfirst($_SESSION['role']) ?></small>
           </div>
+
+          <!-- Tombol Dashboard berdasarkan role -->
           <a href="
             <?php 
               switch ($_SESSION['role']) {
@@ -105,6 +117,11 @@ $items = mysqli_query($con, "SELECT * FROM items WHERE status = 'tersedia' LIMIT
               } 
             ?>
           " class="btn btn-primary">Dashboard</a>
+
+          <!-- Tombol Cari Item hanya untuk Penyewa -->
+          <?php if ($_SESSION['role'] === 'penyewa'): ?>
+            <a href="./penyewa/cari_item.php" class="btn btn-outline-primary">Cari Item</a>
+          <?php endif; ?>
         </div>
       <?php endif; ?>
     </div>
@@ -169,6 +186,6 @@ $items = mysqli_query($con, "SELECT * FROM items WHERE status = 'tersedia' LIMIT
   </div>
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>   
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>    
 </body>
 </html>

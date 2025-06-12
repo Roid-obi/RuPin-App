@@ -32,6 +32,22 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'penyedia') {
             overflow-y: auto; /* Jika isi terlalu panjang */
         }
 
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f8f9fa;
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 2rem;
+            height: 70px;
+        }
+
+        .btn-outline-primary {
+            color: #594ddc;
+            border-color: #594ddc;
+        }
+
         .content {
             flex: 1;
             padding: 2rem;
@@ -63,6 +79,18 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'penyedia') {
         <a href="../logout.php" class="text-danger">Logout</a>
     </div>
     <div class="content">
+
+        <!-- Navbar Atas di Dalam Konten -->
+        <div class="top-nav rounded shadow-sm mb-4">
+            <div>
+                <a href="../index.php" class="btn btn-outline-primary btn-sm">← Ke Homepage</a>
+            </div>
+            <div class="text-end">
+                <small>Halo, <?= ucfirst($_SESSION['role']) ?></small><br>
+                <!-- <a href="../logout.php" class="text-danger text-decoration-none btn btn-link btn-sm">Logout</a> -->
+            </div>
+        </div>
+
         <h2>Selamat datang, Penyedia!</h2>
         <p>Ini adalah halaman dashboard khusus untuk penyedia.</p>
     </div>

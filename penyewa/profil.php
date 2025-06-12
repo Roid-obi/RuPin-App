@@ -46,12 +46,28 @@ if (!$user) {
             overflow-y: auto; /* Jika isi terlalu panjang */
         }
 
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f8f9fa;
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 2rem;
+            height: 70px;
+        }
+
+        .btn-outline-primary {
+            color: #594ddc;
+            border-color: #594ddc;
+        }
+
         .content {
             flex: 1;
             padding: 2rem;
             margin-left: 250px; /* Agar konten tidak tertutup sidebar */
         }
-        
+
         .sidebar a {
             color: white;
             text-decoration: none;
@@ -65,8 +81,6 @@ if (!$user) {
         .content {
             flex: 1;
             padding: 2rem;
-            display: flex;
-            align-items: start;
         }
         .profile-card {
             max-width: 300px;
@@ -80,7 +94,6 @@ if (!$user) {
 <div class="sidebar">
     <h4 class="text-center py-3">Rupin - Penyewa</h4>
     <a href="index.php">Dashboard</a>
-    <a href="cari_item.php">Cari Item</a>
     <a href="status_pemesanan.php">Status Pemesanan</a>
     <a href="profil.php" class="active">Profil Saya</a>
     <a href="../logout.php" class="text-danger">Logout</a>
@@ -88,6 +101,18 @@ if (!$user) {
 
 <!-- Konten Utama -->
 <div class="content">
+
+    <!-- Navbar Atas di Dalam Konten -->
+    <div class="top-nav rounded shadow-sm mb-4">
+        <div>
+            <a href="../index.php" class="btn btn-outline-primary btn-sm">← Ke Homepage</a>
+        </div>
+        <div class="text-end">
+            <small>Halo, <?= ucfirst($_SESSION['role']) ?></small><br>
+            <!-- <a href="../logout.php" class="text-danger text-decoration-none btn btn-link btn-sm">Logout</a> -->
+        </div>
+    </div>
+
     <div class="profile-card">
         <div class="card shadow-sm">
             <div class="card-body text-center">

@@ -50,7 +50,7 @@ if (!$user) {
             padding: 2rem;
             margin-left: 250px; /* Agar konten tidak tertutup sidebar */
         }
-        
+
         .sidebar a {
             color: white;
             text-decoration: none;
@@ -61,11 +61,26 @@ if (!$user) {
         .sidebar .active {
             background-color: #574ee5;
         }
+
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #f8f9fa;
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 2rem;
+            height: 70px;
+        }
+
+        .btn-outline-primary {
+            color: #594ddc;
+            border-color: #594ddc;
+        }
+
         .content {
             flex: 1;
             padding: 2rem;
-            display: flex;
-            align-items: start;
         }
         .profile-card {
             max-width: 300px;
@@ -88,6 +103,17 @@ if (!$user) {
 
 <!-- Konten Utama -->
 <div class="content">
+    <!-- Navbar Atas di Dalam Konten -->
+        <div class="top-nav rounded shadow-sm mb-4">
+            <div>
+                <a href="../index.php" class="btn btn-outline-primary btn-sm">← Ke Homepage</a>
+            </div>
+            <div class="text-end">
+                <small>Halo, <?= ucfirst($_SESSION['role']) ?></small><br>
+                <!-- <a href="../logout.php" class="text-danger text-decoration-none btn btn-link btn-sm">Logout</a> -->
+            </div>
+        </div>
+
     <div class="profile-card">
         <div class="card shadow-sm">
             <div class="card-body text-center">
