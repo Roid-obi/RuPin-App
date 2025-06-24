@@ -39,57 +39,17 @@ $biaya_admin = $data['harga_sewa'] * 0.05;
     <meta charset="UTF-8">
     <title>Detail Pembayaran</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"  rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">  
-    <style>
-        body {
-            display: flex;
-            min-height: 100vh;
-            margin: 0;
-        }
-
-        .sidebar {
-            width: 250px;
-            background-color: #675DFE;
-            color: white;
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            overflow-y: auto;
-        }
-
-        .sidebar h4 {
-            font-weight: bold;
-        }
-
-        .sidebar a {
-            color: white;
-            text-decoration: none;
-            display: block;
-            padding: 1rem;
-        }
-
-        .sidebar a:hover,
-        .sidebar .active {
-            background-color: #574ee5;
-        }
-
-        .content {
-            flex: 1;
-            padding: 2rem;
-            margin-left: 250px;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> 
+    <link href="../styles/dashboard.css"  rel="stylesheet">
 </head>
 <body>
 
 <!-- Sidebar -->
 <div class="sidebar">
-    <h4 class="text-center py-3">Rupin - Penyewa</h4>
+    <h4 class="header-sidebar text-center py-3">Rupin Dashboard</h4>
     <a href="index.php">Dashboard</a>
     <a href="status_pemesanan.php" class="active">Status Pemesanan</a>
     <a href="profil.php">Profil Saya</a>
-    <a href="../logout.php" class="text-danger">Logout</a>
 </div>
 
 <!-- Konten Utama -->

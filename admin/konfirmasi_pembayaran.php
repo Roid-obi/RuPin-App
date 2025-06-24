@@ -23,70 +23,45 @@ $result = $con->query($sql);
     <meta charset="UTF-8">
     <title>Konfirmasi Pembayaran</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"  rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> 
+    <link href="../styles/dashboard.css"  rel="stylesheet">
     <style>
-        body {
-            display: flex;
-            min-height: 100vh;
-            margin: 0;
+         .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 5px rgba(0,0,0,0.05);
+            font-size: 0.95rem;
         }
 
-        .sidebar {
-            width: 250px;
-            background-color: #675DFE;
-            color: white;
-            position: fixed;
-            top: 0;
-            left: 0;
-            height: 100vh;
-            overflow-y: auto;
-        }
-
-        .sidebar a {
-            color: white;
-            text-decoration: none;
-            display: block;
-            padding: 1rem;
-        }
-
-        .sidebar a:hover,
-        .sidebar .active {
-            background-color: #574ee5;
-        }
-
-        .top-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .custom-table thead tr {
             background-color: #f8f9fa;
-            padding: 0.5rem 1rem;
-            border-bottom: 1px solid #ddd;
-            margin-bottom: 2rem;
-            height: 70px;
+            color: #495057;
         }
 
-        .btn-outline-primary {
-            color: #594ddc;
-            border-color: #594ddc;
+        .custom-table th,
+        .custom-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
         }
 
-        .content {
-            flex: 1;
-            padding: 2rem;
-            margin-left: 250px;
+        .custom-table tbody tr:hover {
+            background-color: #f1f3f5;
         }
     </style>
-</head>
 <body>
 
 <!-- Sidebar -->
 <div class="sidebar">
-    <h4 class="text-center py-3">Rupin - Admin</h4>
+    <h4 class="header-sidebar text-center py-3">Rupin Dashboard</h4>
     <a href="index.php" class="<?= basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : '' ?>">Dashboard</a>
     <a href="konfirmasi_pembayaran.php" class="<?= basename($_SERVER['PHP_SELF']) == 'konfirmasi_pembayaran.php' ? 'active' : '' ?>">Konfirmasi Pembayaran</a>
     <a href="kelola_user.php" class="<?= basename($_SERVER['PHP_SELF']) == 'kelola_user.php' ? 'active' : '' ?>">Kelola User</a>
     <a href="laporan_transaksi.php" class="<?= basename($_SERVER['PHP_SELF']) == 'laporan_transaksi.php' ? 'active' : '' ?>">Laporan Transaksi</a>
     <a href="profil.php" class="<?= basename($_SERVER['PHP_SELF']) == 'profil.php' ? 'active' : '' ?>">Profil Saya</a>
-    <a href="../logout.php" class="text-danger">Logout</a>
 </div>
 
 <!-- Konten Utama -->
@@ -94,7 +69,7 @@ $result = $con->query($sql);
     <!-- Navbar Atas di Dalam Konten -->
         <div class="top-nav rounded shadow-sm mb-4">
             <div>
-                <a href="../index.php" class="btn btn-outline-primary btn-sm">← Ke Homepage</a>
+                <a href="../index.php" class="go-home btn btn-outline-secondary btn-sm "><i class="fa-solid fa-chevron-left me-2"></i>Homepage</i></a>
             </div>
             <div class="text-end">
                 <small>Halo, <?= ucfirst($_SESSION['role']) ?></small><br>
@@ -105,8 +80,8 @@ $result = $con->query($sql);
     <h2>Konfirmasi Pembayaran</h2>
 
     <div class="table-responsive">
-        <table class="table table-bordered table-striped">
-            <thead class="table-dark">
+        <table class="custom-table">
+            <thead>
                 <tr>
                     <th>ID Pembayaran</th>
                     <th>ID Pemesanan</th>
@@ -128,18 +103,14 @@ $result = $con->query($sql);
                     <td><?= htmlspecialchars($row['tanggal_bayar']) ?></td>
                     <td>
                         <?php if ($row['status_pesan'] === 'ditolak') { ?>
-                            <!-- Jika pesanan ditolak, pembayaran otomatis tidak dikonfirmasi -->
                             <span class="badge bg-secondary">Tidak Berlaku</span>
                         <?php } elseif ($row['status_pesan'] === 'menunggu') { ?>
-                            <!-- Jika pesanan belum diterima -->
                             <button class="btn btn-sm btn-warning" disabled>Menunggu...</button>
                         <?php } elseif ($row['status_bayar'] === 'menunggu') { ?>
-                            <!-- Jika pesanan diterima tapi pembayaran belum dikonfirmasi -->
                             <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#konfirmasiModal<?= $row['pembayaran_id'] ?>">
                                 Konfirmasi
                             </button>
                         <?php } else { ?>
-                            <!-- Jika sudah dikonfirmasi -->
                             <span class="badge bg-success">Sudah Dikonfirmasi</span>
                         <?php } ?>
                     </td>

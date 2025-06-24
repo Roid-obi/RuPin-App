@@ -39,59 +39,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <title>Edit Pengguna</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"  rel="stylesheet">
-    <style>
-        body {
-            min-height: 100vh;
-            display: flex;
-        }
-        .sidebar {
-            width: 250px;
-            background-color: #675DFE;
-            color: white;
-        }
-        .sidebar a {
-            color: white;
-            text-decoration: none;
-            display: block;
-            padding: 1rem;
-        }
-        .sidebar a:hover,
-        .sidebar .active {
-            background-color: #574ee5;
-        }
-
-        .top-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #f8f9fa;
-            padding: 0.5rem 1rem;
-            border-bottom: 1px solid #ddd;
-            margin-bottom: 2rem;
-            height: 70px;
-        }
-
-        .btn-outline-primary {
-            color: #594ddc;
-            border-color: #594ddc;
-        }
-        .content {
-            flex: 1;
-            padding: 2rem;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> 
+    <link href="../styles/dashboard.css"  rel="stylesheet">
 </head>
 <body>
 
 <!-- Sidebar -->
 <div class="sidebar">
-    <h4 class="text-center py-3">Rupin - Admin</h4>
+    <h4 class="header-sidebar text-center py-3">Rupin Dashboard</h4>
     <a href="index.php" class="<?= basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : '' ?>">Dashboard</a>
     <a href="konfirmasi_pembayaran.php" class="<?= basename($_SERVER['PHP_SELF']) == 'konfirmasi_pembayaran.php' ? 'active' : '' ?>">Konfirmasi Pembayaran</a>
     <a href="kelola_user.php" class="<?= basename($_SERVER['PHP_SELF']) == 'edit_user.php' ? 'active' : '' ?>">Kelola User</a>
     <a href="laporan_transaksi.php" class="<?= basename($_SERVER['PHP_SELF']) == 'laporan_transaksi.php' ? 'active' : '' ?>">Laporan Transaksi</a>
     <a href="profil.php" class="<?= basename($_SERVER['PHP_SELF']) == 'profil.php' ? 'active' : '' ?>">Profil Saya</a>
-    <a href="../logout.php" class="text-danger">Logout</a>
 </div>
 
 <!-- Konten Utama -->
@@ -99,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <!-- Navbar Atas di Dalam Konten -->
         <div class="top-nav rounded shadow-sm mb-4">
             <div>
-                <a href="../index.php" class="btn btn-outline-primary btn-sm">← Ke Homepage</a>
+                <a href="../index.php" class="go-home btn btn-outline-secondary btn-sm "><i class="fa-solid fa-chevron-left me-2"></i>Homepage</i></a>
             </div>
             <div class="text-end">
                 <small>Halo, <?= ucfirst($_SESSION['role']) ?></small><br>

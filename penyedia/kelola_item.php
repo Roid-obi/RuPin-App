@@ -23,64 +23,43 @@ $result = $stmt->get_result();
     <meta charset="UTF-8">
     <title>Daftar Item Anda</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"  rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">    
+    <link href="../styles/dashboard.css" rel="stylesheet">
+
+    <!-- Custom Table Style -->
     <style>
-        body {
-            display: flex;
-            min-height: 100vh;
-            flex-direction: row;
-            margin: 0;
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 5px rgba(0,0,0,0.05);
+            font-size: 0.95rem;
         }
 
-        .sidebar {
-            width: 250px;
-            background-color: #675DFE;
-            color: white;
-            position: fixed; /* Sidebar tetap di tempat */
-            top: 0;
-            left: 0;
-            height: 100vh; /* Penuh dari atas ke bawah */
-            overflow-y: auto; /* Jika isi terlalu panjang */
-        }
-
-        .top-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .custom-table thead tr {
             background-color: #f8f9fa;
-            padding: 0.5rem 1rem;
-            border-bottom: 1px solid #ddd;
-            margin-bottom: 2rem;
-            height: 70px;
+            color: #495057;
         }
 
-        .btn-outline-primary {
-            color: #594ddc;
-            border-color: #594ddc;
+        .custom-table th,
+        .custom-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
         }
 
-        .content {
-            flex: 1;
-            padding: 2rem;
-            margin-left: 250px; /* Agar konten tidak tertutup sidebar */
+        .custom-table tbody tr:hover {
+            background-color: #f1f3f5;
         }
 
-        .sidebar a {
-            color: white;
-            text-decoration: none;
-            display: block;
-            padding: 1rem;
-        }
-        .sidebar a:hover,
-        .sidebar .active {
-            background-color: #574ee5;
-        }
-        .content {
-            flex: 1;
-            padding: 2rem;
-        }
-        img {
+        /* Style untuk gambar item */
+        .item-image {
             max-width: 100px;
             height: auto;
+            border-radius: 10px; /* Border radius untuk gambar */
+            object-fit: cover;
         }
     </style>
 </head>
@@ -88,21 +67,19 @@ $result = $stmt->get_result();
 
 <!-- Sidebar -->
 <div class="sidebar">
-    <h4 class="text-center py-3">Rupin - Penyedia</h4>
+    <h4 class="header-sidebar text-center py-3">Rupin Dashboard</h4>
     <a href="index.php" class="<?= basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : '' ?>">Dashboard</a>
     <a href="daftar_pemesanan.php" class="<?= basename($_SERVER['PHP_SELF']) == 'daftar_pemesanan.php' ? 'active' : '' ?>">Daftar Pemesanan</a>
     <a href="kelola_item.php" class="<?= basename($_SERVER['PHP_SELF']) == 'kelola_item.php' ? 'active' : '' ?>">Kelola Item</a>
     <a href="profil.php" class="<?= basename($_SERVER['PHP_SELF']) == 'profil.php' ? 'active' : '' ?>">Profil Saya</a>
-    <a href="../logout.php" class="text-danger">Logout</a>
 </div>
 
 <!-- Konten Utama -->
 <div class="content">
-
     <!-- Navbar Atas di Dalam Konten -->
     <div class="top-nav rounded shadow-sm mb-4">
         <div>
-            <a href="../index.php" class="btn btn-outline-primary btn-sm">← Ke Homepage</a>
+            <a href="../index.php" class="go-home btn btn-outline-secondary btn-sm "><i class="fa-solid fa-chevron-left me-2"></i>Homepage</i></a>
         </div>
         <div class="text-end">
             <small>Halo, <?= ucfirst($_SESSION['role']) ?></small><br>
@@ -110,12 +87,16 @@ $result = $stmt->get_result();
         </div>
     </div>
 
-    <h2>Daftar Item Anda</h2>
-    <a href="tambah_item.php" class="btn btn-success mb-3">+ Tambah Item</a>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Daftar Item Anda</h2>
+        <a href="tambah_item.php" class="btn btn-success">
+            <i class="fa-solid fa-plus me-2"></i>Tambah Item
+        </a>
+    </div>
 
     <div class="table-responsive">
-        <table class="table table-bordered table-striped">
-            <thead class="table-dark">
+        <table class="custom-table">
+            <thead>
                 <tr>
                     <th>Gambar</th>
                     <th>Nama</th>
@@ -131,7 +112,7 @@ $result = $stmt->get_result();
                 <tr>
                     <td>
                         <?php if (!empty($row['gambar'])) : ?>
-                            <img src="../uploads/<?= htmlspecialchars($row['gambar']) ?>" alt="<?= htmlspecialchars($row['nama']) ?>">
+                            <img src="../uploads/<?= htmlspecialchars($row['gambar']) ?>" alt="<?= htmlspecialchars($row['nama']) ?>" class="item-image">
                         <?php else : ?>
                             <em>Tidak ada gambar</em>
                         <?php endif; ?>
@@ -171,6 +152,6 @@ $result = $stmt->get_result();
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>    
 </body>
 </html>

@@ -26,65 +26,35 @@ $result = $stmt->get_result();
     <meta charset="UTF-8">
     <title>Status Pemesanan</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"  rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">    
+    <link href="../styles/dashboard.css" rel="stylesheet">
+
+    <!-- Custom Table Style -->
     <style>
-        body {
-            display: flex;
-            min-height: 100vh;
-            flex-direction: row;
-            margin: 0;
+        .custom-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #ffffff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 5px rgba(0,0,0,0.05);
+            font-size: 0.95rem;
         }
 
-        .sidebar {
-            width: 250px;
-            background-color: #675DFE;
-            color: white;
-            position: fixed; /* Sidebar tetap di tempat */
-            top: 0;
-            left: 0;
-            height: 100vh; /* Penuh dari atas ke bawah */
-            overflow-y: auto; /* Jika isi terlalu panjang */
-        }
-
-        .top-nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .custom-table thead tr {
             background-color: #f8f9fa;
-            padding: 0.5rem 1rem;
-            border-bottom: 1px solid #ddd;
-            margin-bottom: 2rem;
-            height: 70px;
+            color: #495057;
         }
 
-        .btn-outline-primary {
-            color: #594ddc;
-            border-color: #594ddc;
+        .custom-table th,
+        .custom-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
         }
 
-        .btn-outline-primary:hover {
-            background-color: #594ddc;
-            border-color: #594ddc;
-        }
-
-        .content {
-            flex: 1;
-            padding: 2rem;
-            margin-left: 250px; /* Agar konten tidak tertutup sidebar */
-        }
-
-        .sidebar a {
-            color: white;
-            text-decoration: none;
-            display: block;
-            padding: 1rem;
-        }
-        .sidebar a:hover,
-        .sidebar .active {
-            background-color: #574ee5;
-        }
-        .content {
-            flex: 1;
-            padding: 2rem;
+        .custom-table tbody tr:hover {
+            background-color: #f1f3f5;
         }
     </style>
 </head>
@@ -92,20 +62,18 @@ $result = $stmt->get_result();
 
 <!-- Sidebar -->
 <div class="sidebar">
-    <h4 class="text-center py-3">Rupin - Penyewa</h4>
+    <h4 class="header-sidebar text-center py-3">Rupin Dashboard</h4>
     <a href="index.php">Dashboard</a>
     <a href="status_pemesanan.php" class="active">Status Pemesanan</a>
     <a href="profil.php">Profil Saya</a>
-    <a href="../logout.php" class="text-danger">Logout</a>
 </div>
 
 <!-- Konten Utama -->
 <div class="content">
-
     <!-- Navbar Atas di Dalam Konten -->
     <div class="top-nav rounded shadow-sm mb-4">
         <div>
-            <a href="../index.php" class="btn btn-outline-primary btn-sm">← Ke Homepage</a>
+            <a href="../index.php" class="go-home btn btn-outline-secondary btn-sm "><i class="fa-solid fa-chevron-left me-2"></i>Homepage</i></a>
         </div>
         <div class="text-end">
             <small>Halo, <?= ucfirst($_SESSION['role']) ?></small><br>
@@ -116,8 +84,8 @@ $result = $stmt->get_result();
     <h2>Status Pemesanan</h2>
 
     <div class="table-responsive">
-        <table class="table table-bordered table-striped">
-            <thead class="table-dark">
+        <table class="custom-table">
+            <thead>
                 <tr>
                     <th>Nama Barang</th>
                     <th>Status Pemesanan</th>
@@ -137,7 +105,7 @@ $result = $stmt->get_result();
                         <?php } else { ?>
                             <!-- <span class="text-muted">Tidak tersedia</span> -->
                         <?php } ?>
-                        <a href="detail_pembayaran.php?booking_id=<?= $row['booking_id'] ?>" class="btn btn-sm btn-info text-white">Detail Pesanan</a>
+                        <a href="detail_pembayaran.php?booking_id=<?= $row['booking_id'] ?>" class="btn btn-sm btn-info text-white">Detail Pembayaran</a>
                     </td>
                 </tr>
 
@@ -165,6 +133,6 @@ $result = $stmt->get_result();
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>    
 </body>
 </html>

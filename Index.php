@@ -15,12 +15,17 @@ $items = mysqli_query($con, "SELECT * FROM items WHERE status = 'tersedia' LIMIT
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"  rel="stylesheet">
   <style>
     :root {
-      --primary-color: #675DFE;
+      --primary-color: #262e54;
+    }
+
+    .navbar-logo {
+      /* width: 100%; */
+      height: 50px;
     }
 
     .navbar-brand {
       font-weight: bold;
-      color: #675DFE;
+      color: #016efe;
     }
 
     .hero {
@@ -54,8 +59,8 @@ $items = mysqli_query($con, "SELECT * FROM items WHERE status = 'tersedia' LIMIT
     }
 
     .btn-primary:hover {
-      background-color: #594ddc;
-      border-color: #594ddc;
+      background-color: #016efe;
+      border-color: #016efe;
     }
 
     .btn-outline-primary {
@@ -87,7 +92,8 @@ $items = mysqli_query($con, "SELECT * FROM items WHERE status = 'tersedia' LIMIT
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg shadow-sm">
   <div class="container">
-    <a class="navbar-brand fw-bold " href="index.php">Rupin</a>
+    <!-- <a class="navbar-brand fw-bold " href="index.php">Rupin</a> -->
+     <img class="navbar-logo" src="./image/logo-rupin.png" alt="logo-rupin">
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
       <span class="navbar-toggler-icon"></span>
     </button>

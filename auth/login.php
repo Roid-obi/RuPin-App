@@ -30,19 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <meta charset="UTF-8">
     <title>Login - Rupin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-        }
-        .btn-primary {
-            background-color: #675DFE;
-            border-color: #675DFE;
-        }
-        .btn-primary:hover {
-            background-color: #574ee5;
-            border-color: #574ee5;
-        }
-    </style>
+    <link href="../styles/auth.css" rel="stylesheet">
 </head>
 <body>
 
