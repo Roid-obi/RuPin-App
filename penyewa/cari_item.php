@@ -13,51 +13,14 @@ $result = $con->query($query);
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Daftar Ruang/Alat Tersedia</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"  rel="stylesheet">
-    <style>
-        :root {
-            --primary-color: #675DFE;
-        }
-
-        .navbar-brand {
-            font-weight: bold;
-        }
-
-        .btn-primary {
-            background-color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-
-        .btn-outline-primary {
-            color: var(--primary-color);
-            border-color: var(--primary-color);
-        }
-
-
-        .btn-primary:hover {
-            background-color: #594ddc;
-            border-color: #594ddc;
-        }
-
-        .card-title {
-            font-size: 1.2rem;
-            color: var(--primary-color);
-        }
-
-        footer {
-            background-color: #f8f9fa;
-            padding: 1rem 0;
-            margin-top: 3rem;
-            text-align: center;
-            color: #777;
-        }
-    </style>
+    <link href="../styles/homepage.css" rel="stylesheet">
 </head>
 <body class="d-flex flex-column min-vh-100">
 
 <!-- Navbar -->
 <nav class="navbar navbar-expand-lg shadow-sm">
   <div class="container">
-    <a class="navbar-brand fw-bold text-primary" href="../index.php">Rupin</a>
+    <a class="navbar-brand fw-bold text-primary" href="../index.php"><img class="navbar-logo" src="../image/logo-rupin.png" alt="logo-rupin"></a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -101,7 +64,7 @@ $result = $con->query($query);
 
 <!-- Konten Utama -->
 <div class="container py-5">
-    <h2 class="text-center mb-4 text-primary">Daftar Ruang/Alat Tersedia</h2>
+    <h2 class="text-center mb-4 head-homepage">Daftar Ruang/Alat Tersedia</h2>
 
     <!-- Form Pencarian -->
     <div class="row justify-content-center mb-5">

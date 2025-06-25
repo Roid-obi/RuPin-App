@@ -21,6 +21,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'penyedia') {
         <a href="index.php" class="active">Dashboard</a>
         <a href="daftar_pemesanan.php">Daftar Pemesanan</a>
         <a href="kelola_item.php">Kelola Item</a>
+        <a href="laporan_keterlambatan.php">Lapor Keterlambatan</a>
         <a href="profil.php">Profil Saya</a>
     </div>
     <div class="content">

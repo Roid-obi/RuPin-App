@@ -37,6 +37,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $stmt2->bind_param("ids", $booking_id, $total_pembayaran, $metode);
         $stmt2->execute();
 
+        // Update status item jadi tidak tersedia
+        $update_item = $con->prepare("UPDATE items SET status = 'tidak tersedia' WHERE item_id = ?");
+        $update_item->bind_param("i", $item_id);
+        $update_item->execute();
+
         header("Location: konfirmasi_pembayaran.php?booking_id=" . $booking_id);
         exit();
     } else {

@@ -22,6 +22,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
         <a href="konfirmasi_pembayaran.php">Konfirmasi Pembayaran</a>
         <a href="kelola_user.php">Kelola User</a>
         <a href="laporan_transaksi.php">Laporan Transaksi</a>
+        <a href="hitung_denda.php">Hitung Denda</a>
         <a href="profil.php">Profil Saya</a>
     </div>
     <div class="content">

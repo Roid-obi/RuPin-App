@@ -64,6 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <a href="index.php" class="<?= basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : '' ?>">Dashboard</a>
     <a href="daftar_pemesanan.php" class="<?= basename($_SERVER['PHP_SELF']) == 'daftar_pemesanan.php' ? 'active' : '' ?>">Daftar Pemesanan</a>
     <a href="kelola_item.php" class="<?= basename($_SERVER['PHP_SELF']) == 'tambah_item.php' ? 'active' : '' ?>">Kelola Item</a>
+    <a href="laporan_keterlambatan.php">Lapor Keterlambatan</a>
     <a href="profil.php" class="<?= basename($_SERVER['PHP_SELF']) == 'profil.php' ? 'active' : '' ?>">Profil Saya</a>
 </div>
 
@@ -99,7 +100,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <div class="mb-3">
-            <label for="harga_sewa" class="form-label">Harga Sewa:</label>
+            <label for="harga_sewa" class="form-label">Harga Sewa/Hari:</label>
             <input type="number" name="harga_sewa" id="harga_sewa" class="form-control" placeholder="Harga Sewa" required>
             <div class="invalid-feedback">Harga sewa harus diisi.</div>
         </div>

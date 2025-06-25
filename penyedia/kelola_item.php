@@ -71,6 +71,7 @@ $result = $stmt->get_result();
     <a href="index.php" class="<?= basename($_SERVER['PHP_SELF']) == 'index.php' ? 'active' : '' ?>">Dashboard</a>
     <a href="daftar_pemesanan.php" class="<?= basename($_SERVER['PHP_SELF']) == 'daftar_pemesanan.php' ? 'active' : '' ?>">Daftar Pemesanan</a>
     <a href="kelola_item.php" class="<?= basename($_SERVER['PHP_SELF']) == 'kelola_item.php' ? 'active' : '' ?>">Kelola Item</a>
+    <a href="laporan_keterlambatan.php">Lapor Keterlambatan</a>
     <a href="profil.php" class="<?= basename($_SERVER['PHP_SELF']) == 'profil.php' ? 'active' : '' ?>">Profil Saya</a>
 </div>
 
@@ -101,7 +102,7 @@ $result = $stmt->get_result();
                     <th>Gambar</th>
                     <th>Nama</th>
                     <th>Tipe</th>
-                    <th>Harga Sewa</th>
+                    <th>Harga Sewa/Hari</th>
                     <th>Lokasi</th>
                     <th>Status</th>
                     <th>Aksi</th>

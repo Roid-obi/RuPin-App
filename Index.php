@@ -13,77 +13,41 @@ $items = mysqli_query($con, "SELECT * FROM items WHERE status = 'tersedia' LIMIT
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Rupin</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"  rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link href="./styles/homepage.css" rel="stylesheet">
   <style>
-    :root {
-      --primary-color: #262e54;
-    }
-
-    .navbar-logo {
-      /* width: 100%; */
-      height: 50px;
-    }
-
-    .navbar-brand {
-      font-weight: bold;
-      color: #016efe;
-    }
-
-    .hero {
-      position: relative;
-      background: url('./image/bg.jpg') center center/cover no-repeat;
-      height: 90vh;
-      color: white;
+    /* Blok warna untuk ganti gambar */
+    .image-placeholder {
+      height: 200px;
+      background-color: #f8f9fa; /* Warna default */
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #6c757d;
     }
 
-    .hero::after {
-      content: '';
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 1;
-    }
-
-    .hero-content {
-      position: relative;
-      z-index: 2;
-      text-align: center;
-    }
-
-    .btn-primary {
-      background-color: var(--primary-color);
-      border-color: var(--primary-color);
-    }
-
-    .btn-primary:hover {
-      background-color: #016efe;
-      border-color: #016efe;
-    }
-
-    .btn-outline-primary {
-      color: var(--primary-color);
-      border-color: var(--primary-color);
-    }
-
-    .btn-outline-primary:hover {
-      background-color: var(--primary-color);
+    /* Warna-warna spesifik untuk setiap blok */
+    .image-placeholder.room {
+      background-color: #6f42c1;
       color: white;
     }
 
-    .card-title {
-      font-size: 1.2rem;
-      color: var(--primary-color);
+    .image-placeholder.equipment {
+      background-color: #28a745;
+      color: white;
     }
 
-    footer {
-      background-color: #f8f9fa;
-      padding: 1rem 0;
-      margin-top: 3rem;
-      text-align: center;
-      color: #777;
+    .image-placeholder.banner {
+      background-color: #007bff;
+      color: white;
+    }
+
+    .image-placeholder.gallery {
+      background-color: #ffc107;
+      color: white;
     }
   </style>
 </head>
@@ -93,7 +57,7 @@ $items = mysqli_query($con, "SELECT * FROM items WHERE status = 'tersedia' LIMIT
 <nav class="navbar navbar-expand-lg shadow-sm">
   <div class="container">
     <!-- <a class="navbar-brand fw-bold " href="index.php">Rupin</a> -->
-     <img class="navbar-logo" src="./image/logo-rupin.png" alt="logo-rupin">
+    <a class="navbar-brand fw-bold text-primary" href="./index.php"><img class="navbar-logo" src="../image/logo-rupin.png" alt="logo-rupin"></a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -143,10 +107,13 @@ $items = mysqli_query($con, "SELECT * FROM items WHERE status = 'tersedia' LIMIT
   </div>
 </section>
 
+
+
+
 <!-- Tentang -->
 <section class="py-5 bg-light text-center my-5">
   <div class="container">
-    <h2 class="text-primary mb-4">Tentang RuPin</h2>
+    <h2 class="head-homepage mb-4">Tentang RuPin</h2>
     <p class="lead mb-3">
       RuPin adalah platform digital yang memudahkan Anda untuk menyewa ruangan maupun alat secara online.
     </p>
@@ -158,7 +125,7 @@ $items = mysqli_query($con, "SELECT * FROM items WHERE status = 'tersedia' LIMIT
 
 <!-- Card Items -->
 <section id="items" class="container py-5">
-  <h2 class="text-center mb-4 text-primary">Tersedia Untuk Disewa</h2>
+  <h2 class="text-center mb-4 head-homepage">Tersedia Untuk Disewa</h2>
   <?php if (mysqli_num_rows($items) > 0): ?>
     <div class="row g-4">
       <?php while($item = mysqli_fetch_assoc($items)) : ?>
@@ -184,6 +151,56 @@ $items = mysqli_query($con, "SELECT * FROM items WHERE status = 'tersedia' LIMIT
     </div>
   <?php endif; ?>
 </section>
+
+
+<!-- Pemesanan Aktif -->
+<section class="container py-5">
+  <h2 class="text-center mb-4 head-homepage">Sedang Disewa</h2>
+
+  <?php
+  // Ambil 10 pemesanan terakhir yang statusnya 'disewa'
+  $query_disewa = "
+    SELECT p.booking_id, i.nama AS item_nama, u.nama AS penyewa_nama, p.tanggal
+    FROM pemesanan p
+    JOIN items i ON p.item_id = i.item_id
+    JOIN users u ON p.user_id = u.user_id
+    WHERE p.status = 'disewa'
+    ORDER BY p.tanggal DESC
+    LIMIT 10
+  ";
+  $result_disewa = mysqli_query($con, $query_disewa);
+  ?>
+
+  <?php if (mysqli_num_rows($result_disewa) > 0): ?>
+    <div class="table-responsive">
+      <table class="table table-bordered table-striped align-middle">
+        <thead class="table-primary">
+          <tr>
+            <th>#</th>
+            <th>Nama Item</th>
+            <th>Penyewa</th>
+            <th>Tanggal Sewa</th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php $no = 1; while ($row = mysqli_fetch_assoc($result_disewa)): ?>
+            <tr>
+              <td><?= $no++ ?></td>
+              <td><?= htmlspecialchars($row['item_nama']) ?></td>
+              <td><?= htmlspecialchars($row['penyewa_nama']) ?></td>
+              <td><?= date('d M Y', strtotime($row['tanggal'])) ?></td>
+            </tr>
+          <?php endwhile; ?>
+        </tbody>
+      </table>
+    </div>
+  <?php else: ?>
+    <div class="text-center text-muted">
+      <p class="fs-5">Belum ada pemesanan yang sedang berjalan.</p>
+    </div>
+  <?php endif; ?>
+</section>
+
 
 <!-- Footer -->
 <footer>
