@@ -1,5 +1,4 @@
 <?php
-// session_start();
 include('../session.php');
 include('../config.php');
 
@@ -13,11 +12,12 @@ $id = intval($_GET['id']);
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $nama = mysqli_real_escape_string($con, $_POST['nama']);
-    $email = mysqli_real_escape_string($con, $_POST['email']);
     $role = mysqli_real_escape_string($con, $_POST['role']);
+    $status = mysqli_real_escape_string($con, $_POST['status']);
+    $alamat = mysqli_real_escape_string($con, $_POST['alamat']);
 
-    $stmt = $con->prepare("UPDATE users SET nama=?, email=?, role=? WHERE user_id=?");
-    $stmt->bind_param("sssi", $nama, $email, $role, $id);
+    $stmt = $con->prepare("UPDATE users SET nama=?, role=?, status=?, alamat=? WHERE user_id=?");
+    $stmt->bind_param("ssssi", $nama, $role, $status, $alamat, $id);
     $stmt->execute();
 
     header("Location: kelola_user.php");
@@ -57,16 +57,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 <!-- Konten Utama -->
 <div class="content">
-    <!-- Navbar Atas di Dalam Konten -->
-        <div class="top-nav rounded shadow-sm mb-4">
-            <div>
-                <a href="../index.php" class="go-home btn btn-outline-secondary btn-sm "><i class="fa-solid fa-chevron-left me-2"></i>Homepage</i></a>
-            </div>
-            <div class="text-end">
-                <small>Halo, <?= ucfirst($_SESSION['role']) ?></small><br>
-                <!-- <a href="../logout.php" class="text-danger text-decoration-none btn btn-link btn-sm">Logout</a> -->
-            </div>
+    <div class="top-nav rounded shadow-sm mb-4">
+        <div>
+            <a href="../index.php" class="go-home btn btn-outline-secondary btn-sm"><i class="fa-solid fa-chevron-left me-2"></i>Homepage</a>
         </div>
+        <div class="text-end">
+            <small>Halo, <?= ucfirst($_SESSION['role']) ?></small>
+        </div>
+    </div>
 
     <h2>Edit Pengguna</h2>
 
@@ -78,9 +76,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         </div>
 
         <div class="mb-3">
-            <label for="email" class="form-label">Email:</label>
-            <input type="email" name="email" id="email" value="<?= htmlspecialchars($user['email']) ?>" class="form-control" required>
-            <div class="invalid-feedback">Email harus diisi.</div>
+            <label for="email" class="form-label">Email (tidak bisa diubah):</label>
+            <input type="email" id="email" value="<?= htmlspecialchars($user['email']) ?>" class="form-control" disabled>
         </div>
 
         <div class="mb-3">
@@ -90,8 +87,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <option value="penyewa" <?= $user['role'] === 'penyewa' ? 'selected' : '' ?>>Penyewa</option>
                 <option value="penyedia" <?= $user['role'] === 'penyedia' ? 'selected' : '' ?>>Penyedia</option>
                 <option value="admin" <?= $user['role'] === 'admin' ? 'selected' : '' ?>>Admin</option>
+                <option value="super-admin" <?= $user['role'] === 'super-admin' ? 'selected' : '' ?>>Super Admin</option>
             </select>
             <div class="invalid-feedback">Silakan pilih role pengguna.</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="status" class="form-label">Status:</label>
+            <select name="status" id="status" class="form-select" required>
+                <option value="aktif" <?= $user['status'] === 'aktif' ? 'selected' : '' ?>>Aktif</option>
+                <option value="nonaktif" <?= $user['status'] === 'nonaktif' ? 'selected' : '' ?>>Nonaktif</option>
+            </select>
+            <div class="invalid-feedback">Silakan pilih status pengguna.</div>
+        </div>
+
+        <div class="mb-3">
+            <label for="alamat" class="form-label">Alamat:</label>
+            <textarea name="alamat" id="alamat" class="form-control" rows="3" required><?= htmlspecialchars($user['alamat']) ?></textarea>
+            <div class="invalid-feedback">Alamat harus diisi.</div>
         </div>
 
         <button type="submit" class="btn btn-primary">Simpan</button>

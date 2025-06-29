@@ -1,24 +1,32 @@
 <?php
-// session_start();
 include('../session.php');
 include('../config.php');
 
-// Pastikan user adalah penyewa
+// Cek login dan role penyewa
 if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'penyewa') {
     header("Location: ../auth/login.php");
     exit;
 }
 
+// Pastikan ada booking_id
 if (!isset($_GET['booking_id'])) {
     die("Booking ID tidak ditemukan.");
 }
 
 $booking_id = intval($_GET['booking_id']);
 
-$sql = "SELECT p.jumlah, p.metode, p.status AS status_bayar, i.nama AS nama_item, i.harga_sewa
+// Ambil data pembayaran
+$sql = "SELECT 
+            p.jumlah, 
+            p.metode, 
+            p.status AS status_bayar, 
+            p.bukti,
+            i.nama AS nama_item, 
+            i.harga_sewa,
+            b.jumlah_hari
         FROM pembayaran p
-        JOIN pemesanan pm ON p.booking_id = pm.booking_id
-        JOIN items i ON pm.item_id = i.item_id
+        JOIN booking b ON p.booking_id = b.booking_id
+        JOIN items i ON b.item_id = i.item_id
         WHERE p.booking_id = ?";
 
 $stmt = $con->prepare($sql);
@@ -31,7 +39,9 @@ if ($result->num_rows === 0) {
 }
 
 $data = $result->fetch_assoc();
-$biaya_admin = $data['harga_sewa'] * 0.05;
+$biaya_admin = ($data['harga_sewa'] * $data['jumlah_hari']) * 0.05;
+$total_sewa = $data['harga_sewa'] * $data['jumlah_hari'];
+$total_pembayaran = $total_sewa + $biaya_admin;
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -60,27 +70,44 @@ $biaya_admin = $data['harga_sewa'] * 0.05;
         <div class="card-body">
             <p><strong>Item:</strong> <?= htmlspecialchars($data['nama_item']) ?></p>
             <p><strong>Metode Pembayaran:</strong> <?= htmlspecialchars($data['metode']) ?></p>
-            <p><strong>Harga Sewa:</strong> Rp <?= number_format($data['harga_sewa'], 0, ',', '.') ?></p>
+            <p><strong>Harga Sewa per Hari:</strong> Rp <?= number_format($data['harga_sewa'], 0, ',', '.') ?></p>
+            <p><strong>Jumlah Hari Sewa:</strong> <?= $data['jumlah_hari'] ?> hari</p>
             <p><strong>Biaya Admin (5%):</strong> Rp <?= number_format($biaya_admin, 0, ',', '.') ?></p>
-            <h5><strong>Total yang Harus Dibayar:</strong> Rp <?= number_format($data['jumlah'], 0, ',', '.') ?></h5>
+            <h5><strong>Total yang Harus Dibayar:</strong> Rp <?= number_format($total_pembayaran, 0, ',', '.') ?></h5>
         </div>
     </div>
 
-    <?php if ($data['status_bayar'] === 'dikonfirmasi'): ?>
-        <!-- Jika pembayaran sudah dikonfirmasi -->
+    <?php if ($data['status_bayar'] === 'lunas'): ?>
         <div class="alert alert-success text-center">
             <h5><i class="fas fa-check-circle me-2"></i>Pembayaran Selesai</h5>
             <p>Terima kasih! Pembayaran Anda telah dikonfirmasi.</p>
         </div>
     <?php else: ?>
-        <!-- Jika pembayaran masih menunggu konfirmasi -->
-        <!-- QR Code -->
         <div class="text-center my-4">
             <img src="../image/qr.png" alt="QR Code Pembayaran" class="img-fluid rounded shadow-sm" style="max-width: 250px;">
             <p class="mt-2"><strong>Scan QR Code untuk melakukan pembayaran ke rekening admin.</strong></p>
         </div>
 
-        <!-- Instruksi Kirim Bukti -->
+        <?php if ($data['bukti'] === null): ?>
+            <div class="card p-4 shadow-sm mb-4">
+                <form action="upload_bukti.php" method="POST" enctype="multipart/form-data">
+                    <input type="hidden" name="booking_id" value="<?= $booking_id ?>">
+                    <div class="mb-3">
+                        <label for="bukti" class="form-label">Upload Bukti Pembayaran:</label>
+                        <input type="file" name="bukti" id="bukti" class="form-control" accept="image/*" required>
+                    </div>
+                    <button type="submit" class="btn btn-success">
+                        <i class="fa-solid fa-upload me-2"></i>Upload Bukti
+                    </button>
+                </form>
+            </div>
+        <?php else: ?>
+            <div class="alert alert-info text-center">
+                <strong>Bukti sudah dikirim:</strong><br>
+                <img src="../uploads/<?= htmlspecialchars($data['bukti']) ?>" alt="Bukti" class="img-fluid rounded mt-2" style="max-height: 250px;">
+            </div>
+        <?php endif; ?>
+
         <div class="alert alert-info text-center mb-4">
             <p><strong>Ingin cepat diproses?</strong> Kirim bukti pembayaran melalui WhatsApp ke admin.</p>
             <a href="https://wa.me/6281234567890?text=Halo%20admin,%20saya%20ingin%20mengirim%20bukti%20pembayaran%20untuk%20booking%20ID:<?= $booking_id ?>" 

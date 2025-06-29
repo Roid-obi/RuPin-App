@@ -1,5 +1,4 @@
 <?php
-// session_start();
 include('../session.php');
 include('../config.php');
 
@@ -9,10 +8,11 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
     exit;
 }
 
+// Ambil data pembayaran dan status booking
 $sql = "
-    SELECT p.pembayaran_id, p.booking_id, p.jumlah, p.status AS status_bayar, p.tanggal_bayar, pm.status AS status_pesan
+    SELECT p.pembayaran_id, p.booking_id, p.jumlah, p.status AS status_bayar, p.tanggal_bayar, b.status AS status_booking
     FROM pembayaran p
-    JOIN pemesanan pm ON p.booking_id = pm.booking_id
+    JOIN booking b ON p.booking_id = b.booking_id
     ORDER BY p.tanggal_bayar DESC
 ";
 $result = $con->query($sql);
@@ -26,7 +26,7 @@ $result = $con->query($sql);
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> 
     <link href="../styles/dashboard.css"  rel="stylesheet">
     <style>
-         .custom-table {
+        .custom-table {
             width: 100%;
             border-collapse: collapse;
             background-color: #ffffff;
@@ -35,23 +35,21 @@ $result = $con->query($sql);
             box-shadow: 0 0 5px rgba(0,0,0,0.05);
             font-size: 0.95rem;
         }
-
         .custom-table thead tr {
             background-color: #f8f9fa;
             color: #495057;
         }
-
         .custom-table th,
         .custom-table td {
             padding: 12px 15px;
             text-align: left;
             border-bottom: 1px solid #dee2e6;
         }
-
         .custom-table tbody tr:hover {
             background-color: #f1f3f5;
         }
     </style>
+</head>
 <body>
 
 <!-- Sidebar -->
@@ -67,16 +65,14 @@ $result = $con->query($sql);
 
 <!-- Konten Utama -->
 <div class="content">
-    <!-- Navbar Atas di Dalam Konten -->
-        <div class="top-nav rounded shadow-sm mb-4">
-            <div>
-                <a href="../index.php" class="go-home btn btn-outline-secondary btn-sm "><i class="fa-solid fa-chevron-left me-2"></i>Homepage</i></a>
-            </div>
-            <div class="text-end">
-                <small>Halo, <?= ucfirst($_SESSION['role']) ?></small><br>
-                <!-- <a href="../logout.php" class="text-danger text-decoration-none btn btn-link btn-sm">Logout</a> -->
-            </div>
+    <div class="top-nav rounded shadow-sm mb-4">
+        <div>
+            <a href="../index.php" class="go-home btn btn-outline-secondary btn-sm"><i class="fa-solid fa-chevron-left me-2"></i>Homepage</a>
         </div>
+        <div class="text-end">
+            <small>Halo, <?= ucfirst($_SESSION['role']) ?></small>
+        </div>
+    </div>
 
     <h2>Konfirmasi Pembayaran</h2>
 
@@ -85,32 +81,65 @@ $result = $con->query($sql);
             <thead>
                 <tr>
                     <th>ID Pembayaran</th>
-                    <th>ID Pemesanan</th>
+                    <th>ID Booking</th>
                     <th>Jumlah</th>
-                    <th>Status Pesanan</th>
+                    <th>Status Booking</th>
                     <th>Status Pembayaran</th>
-                    <th>Tanggal Bayar</th>
+                    <th>Tanggal Dikonfirmasi</th>
+                    <th>Bukti Pembayaran</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
-                <?php while ($row = $result->fetch_assoc()) { ?>
+            <?php while ($row = $result->fetch_assoc()) { ?>
                 <tr>
                     <td><?= htmlspecialchars($row['pembayaran_id']) ?></td>
                     <td><?= htmlspecialchars($row['booking_id']) ?></td>
                     <td>Rp <?= number_format($row['jumlah'], 0, ',', '.') ?></td>
-                    <td><?= htmlspecialchars($row['status_pesan']) ?></td>
-                    <td><?= htmlspecialchars($row['status_bayar']) ?></td>
-                    <td><?= htmlspecialchars($row['tanggal_bayar']) ?></td>
+                    <td><?= htmlspecialchars($row['status_booking']) ?></td>
+
+                    <!-- Status Pembayaran -->
                     <td>
-                        <?php if ($row['status_pesan'] === 'ditolak') { ?>
+                        <?php if ($row['status_bayar'] === 'lunas'): ?>
+                            <span class="badge bg-success">Lunas</span>
+                        <?php elseif ($row['status_bayar'] === 'menunggu'): ?>
+                            <span class="badge bg-warning text-dark">Menunggu Konfirmasi</span>
+                        <?php elseif ($row['status_bayar'] === 'belum bayar'): ?>
+                            <span class="badge bg-secondary">Belum Bayar</span>
+                        <?php else: ?>
+                            <span class="text-muted">-</span>
+                        <?php endif; ?>
+                    </td>
+
+                    <td><?= $row['tanggal_bayar'] ?? '-' ?></td>
+
+                    <!-- Bukti Pembayaran -->
+                    <td>
+                        <?php
+                        $pembayaran_id = $row['pembayaran_id'];
+                        $bukti_q = $con->query("SELECT bukti FROM pembayaran WHERE pembayaran_id = $pembayaran_id");
+                        $bukti = $bukti_q->fetch_assoc()['bukti'] ?? null;
+
+                        if ($bukti) {
+                            echo "<a href='../uploads/" . htmlspecialchars($bukti) . "' target='_blank' class='btn btn-sm btn-outline-primary'>Lihat Bukti</a>";
+                        } else {
+                            echo "<span class='text-muted'>Belum Ada</span>";
+                        }
+                        ?>
+                    </td>
+
+                    <!-- Tombol Aksi -->
+                    <td>
+                        <?php if ($row['status_booking'] === 'ditolak') { ?>
                             <span class="badge bg-secondary">Tidak Berlaku</span>
-                        <?php } elseif ($row['status_pesan'] === 'menunggu') { ?>
-                            <button class="btn btn-sm btn-warning" disabled>Menunggu...</button>
-                        <?php } elseif ($row['status_bayar'] === 'menunggu') { ?>
+                        <?php } elseif ($row['status_bayar'] === 'menunggu' && $bukti) { ?>
                             <button class="btn btn-sm btn-success" data-bs-toggle="modal" data-bs-target="#konfirmasiModal<?= $row['pembayaran_id'] ?>">
                                 Konfirmasi
                             </button>
+                        <?php } elseif ($row['status_booking'] === 'menunggu') { ?>
+                            <button class="btn btn-sm btn-warning" disabled>Menunggu...</button>
+                        <?php } elseif ($row['status_bayar'] === 'belum bayar') { ?>
+                            <span class="text-muted">-</span>
                         <?php } else { ?>
                             <span class="badge bg-success">Sudah Dikonfirmasi</span>
                         <?php } ?>
@@ -122,11 +151,11 @@ $result = $con->query($sql);
                     <div class="modal-dialog">
                         <div class="modal-content">
                             <div class="modal-header">
-                                <h5 class="modal-title" id="exampleModalLabel">Konfirmasi Pembayaran</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                <h5 class="modal-title">Konfirmasi Pembayaran</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
                             </div>
                             <div class="modal-body">
-                                Apakah Anda yakin ingin mengkonfirmasi pembayaran ID: <strong><?= $row['pembayaran_id'] ?></strong>?
+                                Yakin ingin mengonfirmasi pembayaran ID: <strong><?= $row['pembayaran_id'] ?></strong>?
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
@@ -135,12 +164,28 @@ $result = $con->query($sql);
                         </div>
                     </div>
                 </div>
-                <?php } ?>
+            <?php } ?>
             </tbody>
         </table>
     </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> 
+<!-- Modal Bukti Pembayaran -->
+<div class="modal fade" id="buktiModal<?= $row['pembayaran_id'] ?>" tabindex="-1" aria-labelledby="buktiModalLabel<?= $row['pembayaran_id'] ?>" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Bukti Pembayaran - ID <?= $row['pembayaran_id'] ?></h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+        </div>
+        <div class="modal-body text-center">
+            <img src="../uploads/<?= htmlspecialchars($buktiRow['bukti']) ?>" alt="Bukti Pembayaran" class="img-fluid rounded shadow-sm" style="max-height: 500px;">
+        </div>
+    </div>
+  </div>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

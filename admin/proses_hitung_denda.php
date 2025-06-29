@@ -1,7 +1,7 @@
 <?php
 header('Content-Type: application/json');
 
-require "../config.php"; // Sesuaikan path sesuai struktur direktori
+require "../config.php";
 
 $data = json_decode(file_get_contents('php://input'), true);
 

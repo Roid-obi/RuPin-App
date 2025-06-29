@@ -31,9 +31,7 @@ if (!$item) {
             --primary-color: #675DFE;
         }
 
-        .navbar-brand {
-            font-weight: bold;
-        }
+        .navbar-brand { font-weight: bold; }
 
         .btn-primary {
             background-color: var(--primary-color);
@@ -55,10 +53,7 @@ if (!$item) {
             color: white;
         }
 
-        .card-title {
-            font-size: 1.2rem;
-            color: var(--primary-color);
-        }
+        .card-title { font-size: 1.2rem; color: var(--primary-color); }
 
         footer {
             background-color: #f8f9fa;
@@ -87,19 +82,15 @@ if (!$item) {
 
     <div class="collapse navbar-collapse justify-content-end" id="navbarContent">
       <?php if (!isset($_SESSION['user_id'])): ?>
-        <!-- Jika belum login -->
         <div class="d-flex gap-2">
           <a href="../auth/login.php" class="btn btn-primary">Login</a>
           <a href="../auth/register.php" class="btn btn-outline-secondary">Register</a>
         </div>
       <?php else: ?>
-        <!-- Jika sudah login -->
         <div class="d-flex align-items-center gap-3">
           <div class="text-dark text-end">
             <small class="d-block">Halo, <?= ucfirst($_SESSION['role']) ?></small>
           </div>
-
-          <!-- Dashboard berdasarkan role -->
           <a href="
             <?php 
               switch ($_SESSION['role']) {
@@ -110,8 +101,6 @@ if (!$item) {
               } 
             ?>
           " class="btn btn-primary">Dashboard</a>
-          
-          <!-- Tombol Cari Item hanya untuk Penyewa -->
           <?php if ($_SESSION['role'] === 'penyewa'): ?>
             <a href="cari_item.php" class="btn btn-outline-primary">Cari Item</a>
           <?php endif; ?>
@@ -131,10 +120,6 @@ if (!$item) {
             <img src="<?= !empty($item['gambar']) ? '../uploads/' . htmlspecialchars($item['gambar']) : '../assets/default.jpg' ?>"
                  alt="<?= htmlspecialchars($item['nama']) ?>"
                  class="full-height-image rounded">
-
-            <!-- Alternatif jika ingin pakai div sebagai container -->
-            <!-- <div class="w-100 bg-light d-flex align-items-center justify-content-center text-muted rounded"
-                 style="background-image: url('../uploads/<?= htmlspecialchars($item['gambar']) ?>'); background-size: cover; background-position: center;"></div> -->
         </div>
 
         <!-- Kolom Card Informasi -->
@@ -150,6 +135,7 @@ if (!$item) {
                             <?= htmlspecialchars($item['status']) ?>
                         </span>
                     </p>
+                    <p class="card-text"><strong>Deskripsi:</strong><br><?= nl2br(htmlspecialchars($item['deskripsi'])) ?></p>
                 </div>
 
                 <!-- Tombol Aksi -->
@@ -164,24 +150,26 @@ if (!$item) {
 
 <!-- Modal Konfirmasi -->
 <div class="modal fade" id="konfirmasiModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Konfirmasi Pesanan</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                Apakah Anda yakin ingin memesan <strong><?= htmlspecialchars($item['nama']) ?></strong>?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                <form method="POST" action="pesan_item.php">
-                    <input type="hidden" name="item_id" value="<?= $item_id ?>">
-                    <button type="submit" class="btn btn-success">Ya, Pesan</button>
-                </form>
-            </div>
+  <div class="modal-dialog">
+    <form method="POST" action="pesan_item.php" class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Konfirmasi Pesanan</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-    </div>
+        <div class="modal-body">
+            <p>Apakah Anda yakin ingin memesan <strong><?= htmlspecialchars($item['nama']) ?></strong>?</p>
+            <div class="mb-3">
+                <label for="jumlah_hari" class="form-label">Jumlah Hari Sewa</label>
+                <input type="number" class="form-control" name="jumlah_hari" id="jumlah_hari" min="1" required>
+            </div>
+            <input type="hidden" name="item_id" value="<?= $item_id ?>">
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+            <button type="submit" class="btn btn-success">Ya, Pesan</button>
+        </div>
+    </form>
+  </div>
 </div>
 
 <!-- Footer -->

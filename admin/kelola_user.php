@@ -75,6 +75,7 @@ $result = $con->query("SELECT * FROM users ORDER BY role");
         </div>
     </div>
 
+
     <!-- <h2>Data Pengguna</h2>
     <a href="tambah_user.php" class="btn btn-success mb-3">Tambah Pengguna</a> -->
 
@@ -84,6 +85,10 @@ $result = $con->query("SELECT * FROM users ORDER BY role");
             <i class="fa-solid fa-plus me-2"></i>Tambah Item
         </a>
     </div>
+
+    <?php if (isset($_GET['success']) && $_GET['success'] === 'hapus'): ?>
+        <div class="alert alert-success">Pengguna berhasil dihapus.</div>
+    <?php endif; ?>
 
     <div class="table-responsive">
         <table class="custom-table">

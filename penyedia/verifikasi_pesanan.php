@@ -2,14 +2,19 @@
 include('../session.php');
 include('../config.php');
 
-$booking_id = $_GET['id'];
+// Ambil parameter dari URL
+$booking_id = intval($_GET['id']);
 $aksi = $_GET['aksi'];
 
-$status_baru = ($aksi == 'terima') ? 'diterima' : 'ditolak';
+// Tentukan status baru berdasarkan aksi
+$status_baru = ($aksi === 'terima') ? 'disetujui' : 'ditolak';
 
-$sql = "UPDATE pemesanan SET status = ? WHERE booking_id = ?";
+// Update status booking
+$sql = "UPDATE booking SET status = ? WHERE booking_id = ?";
 $stmt = $con->prepare($sql);
 $stmt->bind_param("si", $status_baru, $booking_id);
 $stmt->execute();
 
+// Redirect kembali ke halaman daftar
 header("Location: daftar_pemesanan.php");
+exit;

@@ -1,5 +1,4 @@
 <?php
-// session_start();
 include '../session.php';
 include '../config.php';
 
@@ -14,6 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $tipe = mysqli_real_escape_string($con, $_POST['tipe']);
     $harga_sewa = floatval($_POST['harga_sewa']);
     $lokasi = mysqli_real_escape_string($con, $_POST['lokasi']);
+    $deskripsi = mysqli_real_escape_string($con, $_POST['deskripsi']);
     $user_id = $_SESSION['user_id'];
 
     // Upload gambar
@@ -30,10 +30,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    $query = "INSERT INTO items (user_id, nama, tipe, harga_sewa, lokasi, status, gambar)
-              VALUES (?, ?, ?, ?, ?, 'tersedia', ?)";
+    $query = "INSERT INTO items (user_id, nama, tipe, harga_sewa, lokasi, status, gambar, deskripsi)
+              VALUES (?, ?, ?, ?, ?, 'tersedia', ?, ?)";
     $stmt = $con->prepare($query);
-    $stmt->bind_param("isssss", $user_id, $nama, $tipe, $harga_sewa, $lokasi, $gambar);
+    $stmt->bind_param("issdsss", $user_id, $nama, $tipe, $harga_sewa, $lokasi, $gambar, $deskripsi);
     $stmt->execute();
 
     header("Location: kelola_item.php");
@@ -70,16 +70,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!-- Konten Utama -->
 <div class="content">
-    <!-- Navbar Atas di Dalam Konten -->
+    <!-- Navbar Atas -->
     <div class="top-nav rounded shadow-sm mb-4">
         <div>
-            <a href="../index.php" class="go-home btn btn-outline-secondary btn-sm "><i class="fa-solid fa-chevron-left me-2"></i>Homepage</i></a>
+            <a href="../index.php" class="go-home btn btn-outline-secondary btn-sm">
+                <i class="fa-solid fa-chevron-left me-2"></i>Homepage
+            </a>
         </div>
         <div class="text-end">
-            <small>Halo, <?= ucfirst($_SESSION['role']) ?></small><br>
-            <!-- <a href="../logout.php" class="text-danger text-decoration-none btn btn-link btn-sm">Logout</a> -->
+            <small>Halo, <?= ucfirst($_SESSION['role']) ?></small>
         </div>
     </div>
+    
     <h2>Tambah Item</h2>
 
     <form method="post" enctype="multipart/form-data" class="needs-validation" novalidate>
@@ -112,13 +114,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
 
         <div class="mb-3">
+            <label for="deskripsi" class="form-label">Deskripsi:</label>
+            <textarea name="deskripsi" id="deskripsi" class="form-control" rows="3" placeholder="Deskripsi item..." required></textarea>
+            <div class="invalid-feedback">Deskripsi harus diisi.</div>
+        </div>
+
+        <div class="mb-3">
             <label for="gambar" class="form-label">Gambar:</label>
             <input type="file" name="gambar" id="gambar" accept="image/*" onchange="previewImage(event)" class="form-control" required>
             <div class="invalid-feedback">Silakan pilih gambar.</div>
         </div>
 
         <div class="mb-3">
-            <img id="preview" src="#" alt="Preview Gambar" style="display:none; max-width:200px;">
+            <img id="preview" src="#" alt="Preview Gambar">
         </div>
 
         <button type="submit" class="btn btn-primary">Simpan</button>
@@ -139,18 +147,18 @@ function previewImage(event) {
 
 // Validasi Form Bootstrap
 (() => {
-    'use strict'
-    const forms = document.querySelectorAll('.needs-validation')
+    'use strict';
+    const forms = document.querySelectorAll('.needs-validation');
     Array.from(forms).forEach(form => {
         form.addEventListener('submit', event => {
             if (!form.checkValidity()) {
-                event.preventDefault()
-                event.stopPropagation()
+                event.preventDefault();
+                event.stopPropagation();
             }
-            form.classList.add('was-validated')
-        }, false)
-    })
-})()
+            form.classList.add('was-validated');
+        }, false);
+    });
+})();
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script> 

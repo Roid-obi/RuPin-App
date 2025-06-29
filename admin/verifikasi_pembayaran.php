@@ -2,27 +2,46 @@
 include('../session.php');
 include('../config.php');
 
-if ($_SESSION['role'] !== 'admin') {
-    header("Location: ../index.php");
+if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
+    header("Location: ../auth/login.php");
     exit;
 }
 
-$pembayaran_id = $_GET['id'] ?? null;
+$pembayaran_id = isset($_GET['id']) ? intval($_GET['id']) : null;
 $aksi = $_GET['aksi'] ?? null;
 
-if ($pembayaran_id && $aksi == 'konfirmasi') {
-    // Update status dan isi tanggal_bayar saat dikonfirmasi
-    $query = "UPDATE pembayaran 
-              SET status = 'dikonfirmasi', tanggal_bayar = CURDATE() 
-              WHERE pembayaran_id = $pembayaran_id AND status = 'menunggu'";
+if ($pembayaran_id && $aksi === 'konfirmasi') {
+    // Ambil status pembayaran saat ini
+    $stmt = $con->prepare("SELECT status FROM pembayaran WHERE pembayaran_id = ?");
+    $stmt->bind_param("i", $pembayaran_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    if (mysqli_query($con, $query)) {
-        // echo "✅ Pembayaran berhasil dikonfirmasi dan tanggal bayar diisi otomatis.";
-    } else {
-        echo "❌ Gagal mengkonfirmasi pembayaran: " . mysqli_error($con);
+    if ($result->num_rows === 0) {
+        echo "❌ Pembayaran tidak ditemukan.";
+        exit;
     }
 
-    header("Location: ./konfirmasi_pembayaran.php");
+    $row = $result->fetch_assoc();
+    if ($row['status'] !== 'menunggu') {
+        echo "❌ Pembayaran ini tidak dalam status menunggu konfirmasi.";
+        exit;
+    }
+
+    // Lanjut update ke status lunas dan isi tanggal_bayar jika belum terisi
+    $stmt_update = $con->prepare("UPDATE pembayaran SET status = 'lunas' WHERE pembayaran_id = ?");
+    $stmt_update->bind_param("i", $pembayaran_id);
+
+    if ($stmt_update->execute()) {
+        header("Location: ./konfirmasi_pembayaran.php");
+        exit;
+    } else {
+        echo "❌ Gagal mengonfirmasi pembayaran: " . $stmt_update->error;
+        exit;
+    }
+
 } else {
     echo "❌ ID pembayaran atau aksi tidak valid.";
+    exit;
 }
+?>

@@ -158,15 +158,15 @@ $items = mysqli_query($con, "SELECT * FROM items WHERE status = 'tersedia' LIMIT
   <h2 class="text-center mb-4 head-homepage">Sedang Disewa</h2>
 
   <?php
-  // Ambil 10 pemesanan terakhir yang statusnya 'disewa'
+  // Ambil 20 booking terakhir yang statusnya 'disetujui'
   $query_disewa = "
-    SELECT p.booking_id, i.nama AS item_nama, u.nama AS penyewa_nama, p.tanggal
-    FROM pemesanan p
-    JOIN items i ON p.item_id = i.item_id
-    JOIN users u ON p.user_id = u.user_id
-    WHERE p.status = 'disewa'
-    ORDER BY p.tanggal DESC
-    LIMIT 10
+    SELECT b.booking_id, i.nama AS item_nama, u.nama AS penyewa_nama, b.tanggal
+    FROM booking b
+    JOIN items i ON b.item_id = i.item_id
+    JOIN users u ON b.user_id = u.user_id
+    WHERE b.status = 'disetujui'
+    ORDER BY b.tanggal DESC
+    LIMIT 20
   ";
   $result_disewa = mysqli_query($con, $query_disewa);
   ?>
@@ -200,6 +200,7 @@ $items = mysqli_query($con, "SELECT * FROM items WHERE status = 'tersedia' LIMIT
     </div>
   <?php endif; ?>
 </section>
+
 
 
 <!-- Footer -->

@@ -131,6 +131,19 @@ if (!$item) {
         </div>
 
         <div class="mb-3">
+            <label for="deskripsi" class="form-label">Deskripsi:</label>
+            <textarea
+                name="deskripsi"
+                id="deskripsi"
+                class="form-control"
+                rows="3"
+                placeholder="Tulis deskripsi item..."
+                required
+            ><?= isset($item['deskripsi']) ? htmlspecialchars($item['deskripsi']) : '' ?></textarea>
+            <div class="invalid-feedback">Deskripsi harus diisi.</div>
+        </div>
+
+        <div class="mb-3">
             <label for="status" class="form-label">Status:</label>
             <select name="status" id="status" class="form-select" required>
                 <option value="">-- Pilih Status --</option>
