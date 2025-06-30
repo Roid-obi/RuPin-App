@@ -30,9 +30,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         die("❌ Gagal mengunggah file.");
     }
 
-    // Ambil tanggal pemesanan dan jumlah pembayaran
+    // Ambil data booking beserta item_id
     $query = "
-        SELECT b.tanggal, b.jumlah_hari, p.jumlah
+        SELECT b.tanggal, b.jumlah_hari, b.item_id, p.jumlah
         FROM booking b
         JOIN pembayaran p ON p.booking_id = b.booking_id
         WHERE b.booking_id = ?
@@ -47,6 +47,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     $data = $result->fetch_assoc();
+    $item_id = $data['item_id'];
     $tanggal_seharusnya_kembali = date('Y-m-d', strtotime($data['tanggal'] . ' + ' . $data['jumlah_hari'] . ' days'));
 
     // Hitung status keterlambatan
@@ -58,15 +59,51 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $denda = $data['jumlah'] * 0.10; // 10% dari total pembayaran
     }
 
-    // Simpan ke tabel pengembalian
-    $insert = $con->prepare("INSERT INTO pengembalian (booking_id, tanggal_kembali, status, denda, bukti) VALUES (?, ?, ?, ?, ?)");
-    $insert->bind_param("issds", $booking_id, $tanggal_kembali, $status, $denda, $file_name);
+    // Mulai transaksi database
+    $con->begin_transaction();
 
-    if ($insert->execute()) {
+    try {
+        // 1. Simpan ke tabel pengembalian
+        $insert_pengembalian = $con->prepare("INSERT INTO pengembalian (booking_id, tanggal_kembali, status, denda, bukti) VALUES (?, ?, ?, ?, ?)");
+        $insert_pengembalian->bind_param("issds", $booking_id, $tanggal_kembali, $status, $denda, $file_name);
+        
+        if (!$insert_pengembalian->execute()) {
+            throw new Exception("Gagal menyimpan data pengembalian: " . $con->error);
+        }
+
+        // 2. Update status item menjadi 'tersedia'
+        $update_item = $con->prepare("UPDATE items SET status = 'tersedia' WHERE item_id = ?");
+        $update_item->bind_param("i", $item_id);
+        
+        if (!$update_item->execute()) {
+            throw new Exception("Gagal mengubah status item: " . $con->error);
+        }
+
+        // 3. Optional: Update status booking menjadi 'selesai' atau 'dikembalikan'
+        $update_booking = $con->prepare("UPDATE booking SET status = 'selesai' WHERE booking_id = ?");
+        $update_booking->bind_param("i", $booking_id);
+        
+        if (!$update_booking->execute()) {
+            throw new Exception("Gagal mengubah status booking: " . $con->error);
+        }
+
+        // Commit transaksi jika semua berhasil
+        $con->commit();
+        
+        // Redirect dengan pesan sukses
         header("Location: status_pemesanan.php?pengembalian=berhasil");
         exit;
-    } else {
-        echo "❌ Gagal menyimpan data pengembalian: " . $con->error;
+        
+    } catch (Exception $e) {
+        // Rollback transaksi jika ada error
+        $con->rollback();
+        
+        // Hapus file yang sudah diupload jika ada error
+        if (file_exists($file_path)) {
+            unlink($file_path);
+        }
+        
+        die("❌ " . $e->getMessage());
     }
 }
 ?>

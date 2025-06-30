@@ -2,7 +2,18 @@
 include('../session.php');
 include('../config.php');
 
-$query = "SELECT * FROM items WHERE status = 'tersedia'";
+// Ambil parameter search dari URL
+$search_term = isset($_GET['search']) ? trim($_GET['search']) : '';
+
+// Query dengan kondisi pencarian
+if (!empty($search_term)) {
+    // Escape string untuk mencegah SQL injection
+    $search_escaped = mysqli_real_escape_string($con, $search_term);
+    $query = "SELECT * FROM items WHERE status = 'tersedia' AND (nama LIKE '%$search_escaped%' OR tipe LIKE '%$search_escaped%' OR lokasi LIKE '%$search_escaped%')";
+} else {
+    $query = "SELECT * FROM items WHERE status = 'tersedia'";
+}
+
 $result = $con->query($query);
 ?>
 
@@ -69,9 +80,31 @@ $result = $con->query($query);
     <!-- Form Pencarian -->
     <div class="row justify-content-center mb-5">
         <div class="col-md-6">
-            <input type="text" id="searchInput" class="form-control" placeholder="Cari ruang/alat...">
+            <form method="GET" action="">
+                <div class="input-group">
+                    <input type="text" name="search" id="searchInput" class="form-control" 
+                           placeholder="Cari ruang/alat..." 
+                           value="<?= htmlspecialchars($search_term) ?>">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search"></i> Cari
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
+
+    <!-- Menampilkan informasi pencarian -->
+    <?php if (!empty($search_term)): ?>
+        <div class="row justify-content-center mb-3">
+            <div class="col-md-8">
+                <div class="alert alert-info">
+                    <strong>Hasil pencarian untuk:</strong> "<?= htmlspecialchars($search_term) ?>" 
+                    - Ditemukan <?= $result->num_rows ?> item
+                    <a href="cari_item.php" class="btn btn-sm btn-outline-secondary ms-2">Lihat Semua</a>
+                </div>
+            </div>
+        </div>
+    <?php endif; ?>
 
     <div class="row g-4" id="itemContainer">
         <!-- Pesan Tidak Ditemukan -->
@@ -81,7 +114,9 @@ $result = $con->query($query);
 
         <?php if ($result->num_rows > 0): ?>
             <?php while ($item = $result->fetch_assoc()): ?>
-                <div class="col-md-4 item-card" data-nama="<?= strtolower(htmlspecialchars($item['nama'])) ?>">
+                <div class="col-md-4 item-card" data-nama="<?= strtolower(htmlspecialchars($item['nama'])) ?>" 
+                     data-tipe="<?= strtolower(htmlspecialchars($item['tipe'])) ?>" 
+                     data-lokasi="<?= strtolower(htmlspecialchars($item['lokasi'])) ?>">
                     <div class="card h-100 shadow-sm">
                         <?php if (!empty($item['gambar'])): ?>
                             <img src="../uploads/<?= htmlspecialchars($item['gambar']) ?>" class="card-img-top" style="height: 200px; object-fit: cover;" alt="<?= htmlspecialchars($item['nama']) ?>">
@@ -101,7 +136,12 @@ $result = $con->query($query);
             <?php endwhile; ?>
         <?php else: ?>
             <div class="col-12 text-center text-muted">
-                <p class="fs-5">Item belum tersedia.</p>
+                <?php if (!empty($search_term)): ?>
+                    <p class="fs-5">Tidak ada item yang sesuai dengan pencarian "<?= htmlspecialchars($search_term) ?>".</p>
+                    <a href="cari_item.php" class="btn btn-primary">Lihat Semua Item</a>
+                <?php else: ?>
+                    <p class="fs-5">Item belum tersedia.</p>
+                <?php endif; ?>
             </div>
         <?php endif; ?>
     </div>
@@ -115,16 +155,30 @@ $result = $con->query($query);
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>   
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/js/all.min.js"></script>
 
 <script>
+    // Real-time search (client-side filtering)
     document.getElementById('searchInput').addEventListener('keyup', function () {
         const term = this.value.toLowerCase().trim();
         const cards = document.querySelectorAll('.item-card');
         let found = false;
 
+        // Jika ada parameter search dari URL, jangan gunakan client-side filtering
+        const urlParams = new URLSearchParams(window.location.search);
+        const urlSearch = urlParams.get('search');
+        
+        if (urlSearch) {
+            // Jika ada parameter URL search, disable client-side filtering
+            return;
+        }
+
         cards.forEach(card => {
             const name = card.getAttribute('data-nama');
-            if (name.includes(term)) {
+            const tipe = card.getAttribute('data-tipe');
+            const lokasi = card.getAttribute('data-lokasi');
+            
+            if (name.includes(term) || tipe.includes(term) || lokasi.includes(term)) {
                 card.style.display = 'block';
                 found = true;
             } else {
@@ -137,6 +191,16 @@ $result = $con->query($query);
             notFound.style.display = 'none';
         } else {
             notFound.style.display = found ? 'none' : 'block';
+        }
+    });
+
+    // Auto-focus pada search input jika ada parameter search
+    document.addEventListener('DOMContentLoaded', function() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchTerm = urlParams.get('search');
+        
+        if (searchTerm) {
+            document.getElementById('searchInput').focus();
         }
     });
 </script>

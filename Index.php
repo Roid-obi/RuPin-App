@@ -49,6 +49,64 @@ $items = mysqli_query($con, "SELECT * FROM items WHERE status = 'tersedia' LIMIT
       background-color: #ffc107;
       color: white;
     }
+
+    /* Style untuk search card */
+    .search-card {
+      height: 68px;
+      max-width: 800px;
+      border-radius: 80px;
+      background: white;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      border: none;
+      margin: 0 auto;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .search-input {
+      border: none;
+      outline: none;
+      background: transparent;
+      height: 100%;
+      font-size: 1.1rem;
+      padding-left: 30px;
+      padding-right: 80px;
+      width: 100%;
+    }
+
+    .search-input::placeholder {
+      color: #999;
+    }
+
+    .search-btn {
+      position: absolute;
+      right: 8px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      background:rgba(72, 58, 255, 0.63);
+      border: none;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      transition: all 0.3s ease;
+    }
+
+    .search-btn:hover {
+      background: #0056b3;
+      transform: translateY(-50%) scale(1.05);
+    }
+
+    .search-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2rem;
+    }
   </style>
 </head>
 <body>
@@ -83,6 +141,7 @@ $items = mysqli_query($con, "SELECT * FROM items WHERE status = 'tersedia' LIMIT
                   case 'penyewa': echo 'penyewa/index.php'; break;
                   case 'penyedia': echo 'penyedia/index.php'; break;
                   case 'admin': echo 'admin/index.php'; break;
+                  case 'super-admin': echo 'super_admin/index.php'; break;
                   default: echo '#';
               } 
             ?>
@@ -103,7 +162,24 @@ $items = mysqli_query($con, "SELECT * FROM items WHERE status = 'tersedia' LIMIT
   <div class="hero-content container">
     <h1 class="display-4 fw-bold">Sewa Ruangan & Alat Mudah</h1>
     <p class="lead mb-4">Temukan berbagai kebutuhan sewa dengan cepat dan nyaman.</p>
-    <a href="#items" class="btn btn-primary btn-lg">Lihat Item</a>
+    
+    <!-- Search Card -->
+    <div class="search-container">
+      <form action="./penyewa/cari_item.php" method="GET" class="w-100">
+        <div class="search-card">
+          <input 
+            type="text" 
+            name="search" 
+            class="search-input" 
+            placeholder="Cari ruangan atau alat yang ingin disewa..."
+            autocomplete="off"
+          >
+          <button type="submit" class="search-btn">
+            <i class="fas fa-search"></i>
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </section>
 

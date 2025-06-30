@@ -20,9 +20,9 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'super-admin') {
         <h4 class="header-sidebar text-center py-3">Rupin Dashboard</h4>
         <a href="../index.php">Dashboard</a>
         <a href="../manajemen-ruang-alat/index.php" >Manajemen Ruang & alat</a>
-        <a href="../manajemen-pemesanan/index.php" >Manajemen Pemesanan</a>
-        <a href="./index.php" class="active">Manajemen Pembayaran</a>
-        <a href="../manajemen-pengembalian/index.php" >Manajemen Pengembalian</a>
+        <a href="../manajemen-pemesanan/index.php">Manajemen Pemesanan</a>
+        <a href="../manajemen-pembayaran/index.php">Manajemen Pembayaran</a>
+        <a href="./index.php" class="active">Manajemen Pengembalian</a>
         <a href="../manajemen-laporan-pembayaran/index.php">Manajemen laporan Pembayaran</a>
         <a href="../manajemen-pengguna/index.php" >Manajemen Pengguna</a>
         <a href="../profil.php">Profil Saya</a>
@@ -39,7 +39,7 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'super-admin') {
             </div>
         </div>
 
-        <h2>Halaman Manajemen Pembayaran</h2>
+        <h2>Halaman Manajemen Pengembalian Ruang dan Alat</h2>
     </div>
 </body>
 </html>
