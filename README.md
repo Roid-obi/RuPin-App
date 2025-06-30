@@ -1,6 +1,6 @@
 ## Instructions for Running the Program
 
-- Create a database using mysql named "rupin-pemweb"
+- Create a database using mysql named "rupin"
 - Run ``` php -S localhost:8000 ``` in the terminal,
 - Open ``` localhost:8000 ``` in the browser.
 - Run ``` localhost:8000/table_create.php ``` to create tables in the database.
