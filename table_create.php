@@ -5,6 +5,7 @@ require "config.php";
 mysqli_query($con, "SET FOREIGN_KEY_CHECKS=0");
 
 // DROP tabel dari anak ke induk (urutan penting)
+mysqli_query($con, "DROP TABLE IF EXISTS laporan_pembayaran_detail");
 mysqli_query($con, "DROP TABLE IF EXISTS laporan_pembayaran");
 mysqli_query($con, "DROP TABLE IF EXISTS pengembalian");
 mysqli_query($con, "DROP TABLE IF EXISTS pembayaran");
@@ -42,7 +43,7 @@ $sql_items = "CREATE TABLE items (
 )";
 mysqli_query($con, $sql_items) or die("❌ Gagal membuat tabel items: " . mysqli_error($con));
 
-// CREATE TABLE booking (pengganti pemesanan)
+// CREATE TABLE booking
 $sql_booking = "CREATE TABLE booking (
     booking_id INT AUTO_INCREMENT PRIMARY KEY,
     item_id INT,
@@ -68,14 +69,26 @@ $sql_pembayaran = "CREATE TABLE pembayaran (
 )";
 mysqli_query($con, $sql_pembayaran) or die("❌ Gagal membuat tabel pembayaran: " . mysqli_error($con));
 
-// CREATE TABLE laporan_pembayaran (dengan kolom bulan)
+// CREATE TABLE laporan_pembayaran (rekap bulanan)
 $sql_laporan_pembayaran = "CREATE TABLE laporan_pembayaran (
     id INT AUTO_INCREMENT PRIMARY KEY,
     bulan VARCHAR(20),
-    pembayaran_id INT UNIQUE,
-    FOREIGN KEY (pembayaran_id) REFERENCES pembayaran(pembayaran_id)
+    tahun INT,
+    total DOUBLE,
+    jumlah_transaksi INT,
+    waktu_dibuat DATETIME DEFAULT CURRENT_TIMESTAMP
 )";
 mysqli_query($con, $sql_laporan_pembayaran) or die("❌ Gagal membuat tabel laporan_pembayaran: " . mysqli_error($con));
+
+// CREATE TABLE laporan_pembayaran_detail (relasi ke pembayaran)
+$sql_laporan_detail = "CREATE TABLE laporan_pembayaran_detail (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    laporan_id INT,
+    pembayaran_id INT,
+    FOREIGN KEY (laporan_id) REFERENCES laporan_pembayaran(id) ON DELETE CASCADE,
+    FOREIGN KEY (pembayaran_id) REFERENCES pembayaran(pembayaran_id) ON DELETE CASCADE
+)";
+mysqli_query($con, $sql_laporan_detail) or die("❌ Gagal membuat tabel laporan_pembayaran_detail: " . mysqli_error($con));
 
 // CREATE TABLE pengembalian
 $sql_pengembalian = "CREATE TABLE pengembalian (
