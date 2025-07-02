@@ -88,6 +88,7 @@ $result = $con->query($sql);
                     <th>Total Transaksi</th>
                     <th>Jumlah Pembayaran</th>
                     <th>Waktu Dibuat</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -99,6 +100,12 @@ $result = $con->query($sql);
                             <td>Rp <?= number_format($row['total'], 0, ',', '.') ?></td>
                             <td><?= $row['jumlah_transaksi'] ?></td>
                             <td><?= date('d-m-Y H:i', strtotime($row['waktu_dibuat'])) ?></td>
+                            <td>
+                                <a href="detail_laporan.php?id=<?= $row['id'] ?>" class="text-decoration-none">
+                                    Detail
+                                </a>
+                            </td>
+
                         </tr>
                     <?php endwhile; ?>
                 <?php else: ?>

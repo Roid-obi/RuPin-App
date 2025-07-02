@@ -7,29 +7,6 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'super-admin') {
     exit;
 }
 
-// Handle upload bukti pengembalian dan simpan data jika ada form post
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $booking_id = $_POST['booking_id'];
-    $tanggal_kembali = $_POST['tanggal_kembali'];
-    $status = $_POST['status'];
-    $denda = $_POST['denda'];
-
-    $bukti = null;
-    if (!empty($_FILES['bukti']['name'])) {
-        $target_dir = "../../uploads/";
-        $bukti = basename($_FILES['bukti']['name']);
-        $target_file = $target_dir . $bukti;
-        move_uploaded_file($_FILES['bukti']['tmp_name'], $target_file);
-    }
-
-    $stmt = $con->prepare("INSERT INTO pengembalian (booking_id, tanggal_kembali, status, denda, bukti) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("issds", $booking_id, $tanggal_kembali, $status, $denda, $bukti);
-    $stmt->execute();
-    $stmt->close();
-    header("Location: index.php");
-    exit;
-}
-
 // Handle delete
 if (isset($_GET['delete'])) {
     $id = $_GET['delete'];
@@ -38,7 +15,7 @@ if (isset($_GET['delete'])) {
     exit;
 }
 
-$result = $con->query("SELECT * FROM pengembalian ORDER BY tanggal_kembali DESC");
+$result = $con->query("SELECT p.*, b.item_id, i.nama as nama_item FROM pengembalian p JOIN booking b ON p.booking_id = b.booking_id JOIN items i ON b.item_id = i.item_id ORDER BY tanggal_kembali DESC");
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -46,7 +23,7 @@ $result = $con->query("SELECT * FROM pengembalian ORDER BY tanggal_kembali DESC"
     <meta charset="UTF-8">
     <title>Manajemen Pengembalian</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="../../styles/dashboard.css" rel="stylesheet">
     <style>
         .custom-table {
@@ -71,6 +48,11 @@ $result = $con->query("SELECT * FROM pengembalian ORDER BY tanggal_kembali DESC"
         .custom-table tbody tr:hover {
             background-color: #f1f3f5;
         }
+        .preview-img {
+            width: 100px;
+            height: auto;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -81,7 +63,7 @@ $result = $con->query("SELECT * FROM pengembalian ORDER BY tanggal_kembali DESC"
     <a href="../manajemen-pemesanan/index.php">Manajemen Pemesanan</a>
     <a href="../manajemen-pembayaran/index.php">Manajemen Pembayaran</a>
     <a href="./index.php" class="active">Manajemen Pengembalian</a>
-    <a href="../manajemen-laporan-pembayaran/index.php">Manajemen laporan Pembayaran</a>
+    <a href="../manajemen-laporan-pembayaran/index.php">Manajemen Laporan Pembayaran</a>
     <a href="../manajemen-pengguna/index.php">Manajemen Pengguna</a>
     <a href="../profil.php">Profil Saya</a>
 </div>
@@ -95,34 +77,13 @@ $result = $con->query("SELECT * FROM pengembalian ORDER BY tanggal_kembali DESC"
         </div>
     </div>
 
-    <h2>Manajemen Pengembalian</h2>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2 class="mb-0">Manajemen Pengembalian</h2>
+        <a href="tambah.php" class="btn btn-success">
+            <i class="fa fa-plus me-1"></i> Tambah Pengembalian
+        </a>
+    </div>
 
-    <form method="POST" enctype="multipart/form-data" class="mb-4">
-        <div class="row g-2">
-            <div class="col-md-2">
-                <input type="number" name="booking_id" class="form-control" placeholder="Booking ID" required>
-            </div>
-            <div class="col-md-2">
-                <input type="date" name="tanggal_kembali" class="form-control" required>
-            </div>
-            <div class="col-md-2">
-                <select name="status" class="form-control" required>
-                    <option value="tepat waktu">Tepat Waktu</option>
-                    <option value="terlambat">Terlambat</option>
-                    <option value="hilang/rusak">Hilang/Rusak</option>
-                </select>
-            </div>
-            <div class="col-md-2">
-                <input type="number" name="denda" step="0.01" class="form-control" placeholder="Denda">
-            </div>
-            <div class="col-md-2">
-                <input type="file" name="bukti" class="form-control">
-            </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-primary w-100">Tambah</button>
-            </div>
-        </div>
-    </form>
 
     <div class="table-responsive">
         <table class="custom-table">
@@ -130,6 +91,7 @@ $result = $con->query("SELECT * FROM pengembalian ORDER BY tanggal_kembali DESC"
                 <tr>
                     <th>ID</th>
                     <th>Booking ID</th>
+                    <th>Nama Item</th>
                     <th>Tanggal Kembali</th>
                     <th>Status</th>
                     <th>Denda</th>
@@ -142,18 +104,22 @@ $result = $con->query("SELECT * FROM pengembalian ORDER BY tanggal_kembali DESC"
                     <tr>
                         <td><?= $row['pengembalian_id'] ?></td>
                         <td><?= $row['booking_id'] ?></td>
+                        <td><?= $row['nama_item'] ?></td>
                         <td><?= $row['tanggal_kembali'] ?></td>
                         <td><?= $row['status'] ?></td>
                         <td>Rp <?= number_format($row['denda'], 0, ',', '.') ?></td>
                         <td>
                             <?php if ($row['bukti']) : ?>
-                                <a href="../../uploads/<?= $row['bukti'] ?>" target="_blank">Lihat Bukti</a>
+                                <a href="../../uploads/<?= $row['bukti'] ?>" target="_blank">
+                                    <img src="../../uploads/<?= $row['bukti'] ?>" alt="Bukti" class="preview-img">
+                                </a>
                             <?php else: ?>
                                 <span class="text-muted">-</span>
                             <?php endif; ?>
                         </td>
                         <td>
-                            <a href="?delete=<?= $row['pengembalian_id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Yakin ingin menghapus data ini?')">Hapus</a>
+                            <a href="edit.php?id=<?= $row['pengembalian_id'] ?>" class="btn btn-warning btn-sm"><i class="fa fa-edit"></i></a>
+                            <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modalHapus" data-id="<?= $row['pengembalian_id'] ?>"><i class="fa fa-trash"></i></button>
                         </td>
                     </tr>
                 <?php } ?>
@@ -161,6 +127,29 @@ $result = $con->query("SELECT * FROM pengembalian ORDER BY tanggal_kembali DESC"
         </table>
     </div>
 </div>
+
+<!-- Modal Hapus -->
+<div class="modal fade" id="modalHapus" tabindex="-1" aria-labelledby="modalHapusLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <form method="GET" action="">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalHapusLabel">Konfirmasi Hapus</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Tutup"></button>
+        </div>
+        <div class="modal-body">
+          Apakah kamu yakin ingin menghapus data pengembalian ini?
+          <input type="hidden" name="delete" id="delete-id">
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+          <button type="submit" class="btn btn-danger">Hapus</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>    
 </body>
 </html>
